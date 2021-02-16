@@ -3711,7 +3711,7 @@ class Payroll extends MY_Controller {
 		$employee_main_name = ucwords($user[0]->last_name);
 		$employee_other_names =  ucwords($user[0]->first_name);
 		$employee_name = $employee_other_names.' '.$employee_main_name;
-		$employer_logo = base_url().'uploads/logo/'.$company[0]->logo;
+		$employer_logo = base_url().'uploads/logo/kra_image.png';
 
 		$employee_pin = $user[0]->pincode;
 		$employer =$company[0]->name;
@@ -3743,7 +3743,7 @@ class Payroll extends MY_Controller {
 		$pdf->SetAuthor($employee_name);
 		$pdf->setFooterData(array(0,64,0), array(0,64,128));
 		$pdf->setFooterFont(Array('helvetica', '', 9));
-		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+		$pdf->SetAutoPageBreak(TRUE, 0);
 		$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 		//$pdf->SetFont('dejavusans', '', 10, '', true);
 		//$pdf->SetHeaderData($employer_logo, 20, $employer, $header_string);
@@ -3843,32 +3843,13 @@ class Payroll extends MY_Controller {
 							<td style="text-align:center">L</td>
 						
    						</tr>	';
-
-
-
-
-					$months = array("January","February","March", "April","May","June","July","August","September","October","November","December");
-					$taxes = array(
-						array(0,24000,10),
-						array(24000, 32333, 25),
-						array(32333, 32333+1, 30),
-					);
-					$totalA =0;
-					$totalB =0;
-					$totalC =0;
-					$totalD =0;
-					$totalE1 =0;
-					$totalE2 =0;
-					$totalE3 =0;
-					$totalF =0;
-					$totalG =0;
-					$totalH =0;
-					$totalJ =0;
-					$totalK =0;
-					$totalL =0;
-
-
-
+			$months = array("January","February","March", "April","May","June","July","August","September","October","November","December");
+			$taxes = array(
+				array(0,24000,10),
+				array(24000, 32333, 25),
+				array(32333, 32333+1, 30),
+			);
+					$totalA = $totalB =$totalC =$totalD =$totalE1 =$totalE2 =$totalE3 =$totalF =$totalG =$totalH =$totalJ =$totalK =$totalL =0;
 					$pay_slip_details = array();
 					foreach ($payroll_statement as $ps)
 					{
@@ -4136,7 +4117,293 @@ class Payroll extends MY_Controller {
 		$pdf->writeHTML($message, true, false, false, false, '');
 
 
+		$pdf->AddPage('p',array('format' => 'A4', 'Rotate' => -90));
+		$pdf->SetFont('helvetica', 'B', 10);
 
+		$pdf->SetY(10);
+		$pdf->SetX(9);
+		$message = '<h1><strong>APPENDIX 1B</strong></h1>';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetFont('helvetica', '', 10);
+		$pdf->SetY(20);
+		$pdf->SetX(9);
+		$message = '<h4>FORMATION REQUIRED FROM EMPLOYER AT END OF YEAR</h4>';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+
+		$pdf->SetFont('helvetica', '', 8);
+		$pdf->SetY(30);
+		$pdf->SetX(9);
+		$message = '<p>
+					1. Date Employee commenced if during year: 01-January-2020<br>
+					2. Name and address of old employer: N/A.<br>
+					3. Date Left if during year: N/A<br>
+					4. Name and address of new employer: N/A<br>
+					5. Where housing is provided, state monthly rent charged: ________________________________<br>
+					6. Where any of the pay relates to a period other than this year, e.g. gratuity,<br>
+					7. Give details of Amounts, Year and Tax <br></p>';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+
+		$pdf->SetFont('helvetica', 'B', 8);
+		$pdf->SetY(30);
+		$pdf->SetX(140);
+
+		$html = '<table cellspacing="0" cellpadding="1" border="1">					
+						<tr>
+							  <th style="text-align:center">Year</th>
+							  <th style="text-align:center">Amount</th>
+							  <th style="text-align:center">Tax.</th>
+						</tr>	
+						 <tr>
+							<td></td>
+							<td style="text-align:center">Ksh</td>
+							<td style="text-align:center">Ksh</td>						
+   						</tr>';
+   						for($i=0; $i<4; $i++)
+						{
+							$html .=' <tr>
+										<td>20</td>
+										<td style="text-align:center"></td>
+										<td style="text-align:center"></td>						
+									</tr>';
+						}
+
+
+							$html.='</table>';
+
+		$pdf->writeHTML($html, true, false, false, false, '');
+
+		$pdf->SetFont('helvetica', '', 10);
+		$pdf->SetY(60);
+		$pdf->SetX(9);
+		$message = '<p>FOR MONTHLY RATES OF BENEFITS PLEASE REFER TO EMPLOYER\'S GUIDE TO P.A.Y.E. - P7</p>';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetY(65);
+		$pdf->SetX(9);
+		$message = '<p style="text-align: center">CALCULATION OF TAX ON BENEFITS</p>';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetFont('helvetica', '', 8);
+		$pdf->SetY(70);
+		$pdf->SetX(9);
+
+		$html = '<table cellspacing="0" cellpadding="1" border="0">					
+						<tr>
+							  <th style="text-align:left"><u>BENEFIT</u></th>
+							  <th style="text-align:center"><u>NO</u></th>
+							  <th style="text-align:center"></th>
+							  <th style="text-align:center"><u>RATE</u></th>
+							  <th style="text-align:center"></th>
+							  <th style="text-align:center"><u>NO. OF MONTHS</u></th>
+							  <th style="text-align:center"></th>
+							  <th style="text-align:center"><u>TOTAL AMOUNT</u></th>
+						</tr>	
+						 <tr>
+							<td></td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td>0</td>						
+							<td style="text-align:center">X</td>						
+							<td>12</td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						<tr>
+							<td>COOK/HOUSE</td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						
+   						<tr>
+							<td>SERVANT</td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						<tr>
+							<td>GARDENER</td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						<tr>
+							<td>AYAH</td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						<tr>
+							<td>WATCHMAN (D)</td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						<tr>
+							<td>WATCHMAN (N)</td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						<tr>
+							<td>FURNITURE</td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						<tr>
+							<td>WATER</td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						<tr>
+							<td>TELEPHONE</td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						<tr>
+							<td>ELECTRICITY</td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						<tr>
+							<td>SECURITY SYSTEM</td>
+							<td></td>
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">X</td>						
+							<td></td>						
+							<td style="text-align:center">=</td>						
+							<td></td>						
+   						</tr>
+   						';
+		$html.='</table>';
+		$pdf->writeHTML($html, true, false, false, false, '');
+
+		$message = '<p>Where actual cost is higher than given monthly rates of benefits then the actual cost is brought to charge in full.</p>';
+		$pdf->SetY(130);
+		$pdf->SetX(9);
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+
+		$message = '<h3>LOW INTEREST RATE BELOW PRESCRIBED RATE OF INTEREST.</h3>';
+		$pdf->SetY(135);
+		$pdf->SetX(9);
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+
+		$message = '<p>EMPLOYERS LOAN = KShs ................... @ .......... RATE.<br><br>RATE DIFFERENCE<br><br>PRESCRIBED RATE - EMPLOYERS RATE) = ...................%<br><br>
+MONTHLY BENEFIT (RATE DIFFERENCE X LOAN) = ........% X KShs ................... = ................... = .................../ .......... =..............<br><br></p>';
+		$pdf->SetY(145);
+		$pdf->SetX(9);
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetY(173);
+		$pdf->SetX(9);
+		$message = '<p>MOTOR CARS</p>';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+
+		$pdf->SetY(178);
+		$pdf->SetX(9);
+		$html = '<table cellspacing="0" cellpadding="1" border="0">
+				<tr>
+					<td>Up ro 1500 c.c.</td>
+					<td>X</td>
+					<td>=</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>1501 c.c. - 1750 c.c.</td>
+					<td>X</td>
+					<td>=</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>1751 c.c. - 2000 c.c.</td>
+					<td>X</td>
+					<td>=</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>2001 c.c. - 3000 c.c.</td>
+					<td>X</td>
+					<td>=</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Over 3000 c.c.</td>
+					<td>X</td>
+					<td>=</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Total Benefit in Year</td>
+					<td></td>
+					<td>=</td>
+					<td>0</td>
+				</tr>
+		</table>';
+		$pdf->writeHTML($html, true, false, false, false, '');
+
+		$pdf->SetY(203);
+		$pdf->SetX(9);
+		$message = '<p>If this amount does not agree with total of Col. B overleaf, attach explanation.<br><br>
+						OR PICK-UPS, PANEL VANS AND LAND-ROVERS REFER TO APPENDIX 5 OF EMPLOYER\'S GUIDE.<br><br>
+						CAR BENEFIT - The higher the amount of the fixed monthly rate or the prescribed rate of benefits is to be brought to charge :-<br><br>
+						RESCRIBED RATE: - <br><span>1996 - 1% per month of the initial cost of the vehicle<br>1996 - 2% per month of the initial cost of the vehicle<br>
+						</span><br><br>EMPLOYERS CERTIFICATE OF PAY AND TAX<br><br>NAME: <u>WISE & AGILE SOLUTIONS</u> <br><br>ADDRESS: <u>NAIROBI</u>
+						<br><br> SIGNATURE: _____________________________________________________<br><br>DATE & STAMP: ___________________________________________________<br><br>
+						NOTE: Employer\'s certificate to be signed by the person who prepares and submits the PAYE End of Year Returns and copy of the
+						P9A be issued to the employee in January.						
+						</p>';
+		$pdf->writeHTML($message, true, false, false, false, '');
 
 		$pdf->Output($employee_main_name.' '.$employee_other_names.'_p9.pdf', 'I');
 

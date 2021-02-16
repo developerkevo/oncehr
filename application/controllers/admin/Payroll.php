@@ -3804,7 +3804,7 @@ class Payroll extends MY_Controller {
 		$pdf->writeHTML('P9A');
 
 	//p9form data
-		$pdf->SetFont('helvetica', '', 10);
+		$pdf->SetFont('helvetica', '', 9);
 
 		$pdf->SetY(50);
 		$pdf->SetX(11);
@@ -4053,18 +4053,91 @@ class Payroll extends MY_Controller {
 		$html .='</table>';
 
 		$pdf->writeHTML($html, true, false, false, false, '');
+		$pdf->SetFont('helvetica', 'B', 12);
 
-		$html2 = '<div style="display: flex;  justify-content: space-between;">
-						<div>
+		$pdf->SetY(140);
+		$pdf->SetX(9);
+		$message = 'TOTAL CHARGEABLE PAY (COL H) kShs. '.number_format($totalH,2,'.',',');
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetY(140);
+		$pdf->SetX(160);
+		$message = 'TOTAL TAX PAY (COL L) kShs. '.number_format($totalL,2,'.',',');
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetY(145);
+		$pdf->SetX(9);
+		$message = '<u>IMPORTANT</u>';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetFont('helvetica', '', 8);
+
+		$pdf->SetY(150);
+		$pdf->SetX(9);
+		$message = '<ol type="1">
+						<li>
+						Use P9A
+							<ol type="a">
+								<li>For all liable employees and when director/employee received benefits in addition <br>to cash emoluments</li>
+								<li>Where an employees is eligible to deduction owner occupied interest deduction </li>
+							</ol>
+						</li>
 						
-							<h4><b>TOTAL CHARGABLE PAY (COL H) kShs. '.number_format($totalH,2,'.',',').' </b></h4>
-						</div>
-						<div>
-							<h4><b>TOTAL CHARGABLE PAY (COL H) kShs. '.number_format($totalH,2,'.',',').' </b></h4>
-						</div>
-					
-				</div>';
-		$pdf->writeHTML($html2, true, false, false, false, '');
+						<li>
+							
+						(a) Deductible interest in respect of any month must not exceed KShs. 12,500/=
+							
+						</li>
+									
+			</ol>';
+
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetY(150);
+		$pdf->SetX(150);
+		$message = '(b) Attach';
+		$pdf->writeHTML($message, true, false, false, false, '');
+		$pdf->SetY(155);
+		$pdf->SetX(143);
+		$message = 'i).Photostat copy of interest certificate and statement of account from the financial institution.';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetY(160);
+		$pdf->SetX(143);
+		$message = 'ii. The DECLARATION duly signed by the employee';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetFont('helvetica', 'B', 10);
+
+		$pdf->SetY(165);
+		$pdf->SetX(143);
+		$message = 'NAMES OF FINANCIAL INSTITUTION ADVANCING MORTGAGE LOAN';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetY(170);
+		$pdf->SetX(143);
+		$message = '_________________________';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetY(175);
+		$pdf->SetX(143);
+		$message = 'L.R. NO. OF OWNER OCCUPIED PROPERTY:______________________';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+		$pdf->SetY(180);
+		$pdf->SetX(143);
+		$message = 'DATE OF OCCUPATION OF HOUSE: _____________________________';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+
+		$pdf->SetY(175);
+		$pdf->SetX(9);
+		$message = '(See back of this card for further information required by the Department).<br>P9A';
+		$pdf->writeHTML($message, true, false, false, false, '');
+
+
+
+
 		$pdf->Output($employee_main_name.' '.$employee_other_names.'_p9.pdf', 'I');
 
 

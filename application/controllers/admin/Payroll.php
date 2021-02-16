@@ -4033,8 +4033,6 @@ class Payroll extends MY_Controller {
    						</tr>';
 		}
 
-
-
 		$html.= '<tr>
 						<td><b>Totals</b></td>
 						<td style="text-align:center"><b>'.number_format($totalA,2,'.',',').'</b></td>
@@ -4052,14 +4050,21 @@ class Payroll extends MY_Controller {
 						<td style="text-align:center"><b>'.number_format($totalL,2,'.',',').'</b></td>							
    				</tr>';
 
-
-
-   					$html .='</table>';
-
+		$html .='</table>';
 
 		$pdf->writeHTML($html, true, false, false, false, '');
 
-
+		$html2 = '<div style="display: flex;  justify-content: space-between;">
+						<div>
+						
+							<h4><b>TOTAL CHARGABLE PAY (COL H) kShs. '.number_format($totalH,2,'.',',').' </b></h4>
+						</div>
+						<div>
+							<h4><b>TOTAL CHARGABLE PAY (COL H) kShs. '.number_format($totalH,2,'.',',').' </b></h4>
+						</div>
+					
+				</div>';
+		$pdf->writeHTML($html2, true, false, false, false, '');
 		$pdf->Output($employee_main_name.' '.$employee_other_names.'_p9.pdf', 'I');
 
 

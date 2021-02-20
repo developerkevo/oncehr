@@ -2494,8 +2494,7 @@ class Payroll extends MY_Controller {
 		}
      }	
 	 public function pdf_create(){
-		 	
-		//$this->load->library('Pdf');
+
 		$system = $this->Xin_model->read_setting_info(1);		
 		 // create new PDF document
    		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
@@ -3231,7 +3230,7 @@ class Payroll extends MY_Controller {
 					</tr></table>';
 			} else {
 				$total_earning = $bs + $allowance_amount + $overtime_amount + $commissions_amount + $other_payments_amount;
-				$total_deduction = $loan_de_amount + $statutory_deduction_amount + $add_deduct_other_payments_amount + $add_deduct_commissions_amount + $add_deduction_allowance + $advance_salary_tkn;
+				$total_deduction = $loan_de_amount + $statutory_deduction_amount + $add_deduct_other_payments_amount + $add_deduct_commissions_amount + $add_deduction_allowance + $advance_salary_tkn + $payment[0]->total_loan;
 				$total_net_salary = $total_earning - $total_deduction;
 				$etotal_earning = $total_earning;
 				$fsalary = $total_earning - $total_deduction;

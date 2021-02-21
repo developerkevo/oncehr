@@ -3188,8 +3188,12 @@ class Payroll extends MY_Controller {
 				}
 			}
 			//loan
+
+		 $total_loan =0;
 			if($count_loan > 0) {
+
 				foreach($loan->result() as $r_loan) {
+					$total_loan +=$r_loan->loan_amount;
 				$tblbrk .= '<tr>
 					<td colspan="2">'.$r_loan->loan_title.'</td>
 					<td>&nbsp;</td>	
@@ -3210,7 +3214,7 @@ class Payroll extends MY_Controller {
 			if($payment[0]->payslip_type=='hourly'){
 				$etotal_count = $hcount * $bs;
 				$total_earning = $etotal_count + $allowance_amount + $overtime_amount + $commissions_amount + $other_payments_amount;
-				$total_deduction = $loan_de_amount + $statutory_deduction_amount + $add_deduct_other_payments_amount + $add_deduct_commissions_amount + $add_deduction_allowance + $advance_salary_tkn;
+				$total_deduction = $loan_de_amount + $statutory_deduction_amount + $add_deduct_other_payments_amount + $add_deduct_commissions_amount + $add_deduction_allowance + $advance_salary_tkn + $total_loan;
 				
 				$total_net_salary = $total_earning - $total_deduction;
 				$etotal_earning = $total_earning;
@@ -3230,7 +3234,7 @@ class Payroll extends MY_Controller {
 					</tr></table>';
 			} else {
 				$total_earning = $bs + $allowance_amount + $overtime_amount + $commissions_amount + $other_payments_amount;
-				$total_deduction = $loan_de_amount + $statutory_deduction_amount + $add_deduct_other_payments_amount + $add_deduct_commissions_amount + $add_deduction_allowance + $advance_salary_tkn + $payment[0]->total_loan;
+				$total_deduction = $loan_de_amount + $statutory_deduction_amount + $add_deduct_other_payments_amount + $add_deduct_commissions_amount + $add_deduction_allowance + $advance_salary_tkn + $total_loan;
 				$total_net_salary = $total_earning - $total_deduction;
 				$etotal_earning = $total_earning;
 				$fsalary = $total_earning - $total_deduction;
@@ -3672,6 +3676,184 @@ class Payroll extends MY_Controller {
 	 }
 
 
+	 //nssf nhif reports
+	public function generate_nssf_nhif_report()
+	{
+		$session = $this->session->userdata('username');
+		if(empty($session)){
+			redirect('admin/');
+		}
+		$data['title'] = $this->lang->line('xin_nssf_nhif_report').' | '.$this->Xin_model->site_title();
+		$data['all_employees'] = $this->Xin_model->all_employees();
+		$data['path_url'] = 'generate_nssf_nhif_report';
+		$data['breadcrumbs'] = $this->lang->line('xin_nssf_nhif_report');
+		$role_resources_ids = $this->Xin_model->user_role_resource();
+		if(in_array('467',$role_resources_ids)) {
+			$data['subview'] = $this->load->view("admin/payroll/generate_nssf_nhif_report", $data, TRUE);
+			$this->load->view('admin/layout/layout_main', $data); //page load
+		} else {
+			redirect('admin/dashboard');
+		}
+	}
+
+
+
+
+
+	 //public function nssf
+	public function nssf_nhif_report()
+	{
+
+		$emplyee_id = $this->input->post('employee_id');
+		$year = (int)explode('-',$this->input->post('month_year'))[0];
+
+		$type = $this->input->post("type");
+
+
+
+
+		$payroll_year = $year;
+		$date_from = date('Y-m-d h:i:s',strtotime('1-1-'.$payroll_year));
+		$date_to = date('Y-m-d h:i:s', strtotime('31-12-'.$payroll_year));
+		$payroll_statement = $this->Payroll_model->get_payslips_for_p9($emplyee_id,$date_from, $date_to);
+
+		$bs = $payroll_statement[0]->basic_salary;
+
+		$months = array("January","February","March", "April","May","June","July","August","September","October","November","December");
+
+		$pdf = new TCPDF("P", PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+
+		$user = $this->Xin_model->read_user_info($emplyee_id);
+		$employee_main_name = ucwords($user[0]->last_name);
+		$employee_other_names =  ucwords($user[0]->first_name);
+		$employee_name = $employee_other_names.' '.$employee_main_name;
+
+
+
+		$pdf->SetCreator($employee_name);
+		$pdf->SetAuthor($employee_name);
+		$pdf->setFooterData(array(0,64,0), array(0,64,128));
+		$pdf->setFooterFont(Array('helvetica', '', 9));
+		$pdf->SetAutoPageBreak(TRUE, 0);
+		$pdf->SetPrintHeader(false);
+		$pdf->AddPage();
+		$pdf->Ln(1);
+		$pdf->SetFont('helvetica', 'B', 12);
+		$pdf->Cell(180,5,$employee_name,0,1,'C');
+		$pdf->Ln(1);
+		$text = $type." Contribution Year ".$year;
+		$pdf->Cell(180,5, $text,0,1,'C');
+
+		$pdf->SetFont('helvetica', '', 11);
+
+		$pdf->SetY(30);
+		$pdf->SetX(11);
+		$html = '
+				<table cellspacing="0" cellpadding="1" border="1">
+					
+						<tr>
+							  <th style="text-align:center">Months</th>
+							  <th style="text-align:center">Amount(Ksh)</th>
+							 
+						</tr>';
+
+
+		$pay_slip_details = $this->pay_slip_details($payroll_statement, $emplyee_id);
+		$total_pay = 0;
+		foreach ($months as $key => $m)
+		{
+
+			if(array_key_exists($key+1, $pay_slip_details))
+			{
+
+				if($type == "NSSF")
+				{
+				$pay = $pay_slip_details[$key+1]["deductions"];
+				$total_pay += $pay;
+				}else{
+					$pay = $pay_slip_details[$key+1]["nhif"];
+					$total_pay += $total_pay;
+				}
+
+
+			}else
+			{
+				$pay = 0;
+				$total_pay += $pay;
+			}
+
+			$html.= '<tr>
+							<td>'.$m.'</td>
+							<td style="text-align:right">'.number_format($pay,2,'.',',').'</td>
+   						</tr>';
+		}
+						
+		$html.='		 <tr>
+							<td style="text-align:center"><b>Total</b></td>
+							<td style="text-align:right"><b>'.number_format($total_pay,2,'.',',').'</b></td>
+						
+   						</tr>	';
+
+		$html .= '</table>';
+
+		$pdf->writeHTML($html);
+
+		$pdf->Output($employee_main_name.' '.$employee_other_names.'_p9.pdf', 'I');
+		ob_end_flush();
+
+
+	}
+
+	private function pay_slip_details($payroll_statement, $emp_id)
+	{
+
+		$pay_slip_details = array();
+		foreach ($payroll_statement as $ps)
+		{
+			$month = (int)explode('-',$ps->salary_month)[1];
+			$basic_salary  = $ps->basic_salary;
+			$total_allowanse = $ps->total_allowances;
+			$commission = $ps->total_commissions;
+			$other_payments = $ps->total_other_payments;
+
+			$deductions = $this->Employees_model->read_salary_statutory_deductions($emp_id);
+
+			$get_nssf_deductions = 0;
+			$get_nhif_deductions = 0;
+			foreach($deductions as $d)
+			{
+				if($d->deduction_title == "NSSF")
+				{
+					if($d->statutory_options == 1)
+					{
+						$get_nssf_deductions = ($d->deduction_amount * $basic_salary) / 100;
+					}else
+					{
+						$get_nssf_deductions = $d->deduction_amount;
+					}
+				}else
+					if($d->deduction_title == "NHIF")
+					{
+						if($d->statutory_options == 1)
+						{
+							$get_nhif_deductions = ($d->deduction_amount * $basic_salary) / 100;
+						}else
+						{
+							$get_nhif_deductions = $d->deduction_amount;
+						}
+					}
+
+			}
+
+			$benefits = $total_allowanse + $commission + $other_payments;
+			$pay_slip_details += [$month => ["bs"=>$basic_salary, "benefits"=>$benefits,"deductions"=>$get_nssf_deductions,"nhif"=>$get_nhif_deductions]];
+
+
+		}
+
+		return $pay_slip_details;
+	}
 	 //generate p9 form
 	public function generate_p9()
 	{
@@ -3850,38 +4032,8 @@ class Payroll extends MY_Controller {
 				array(24000, 32333, 25),
 				array(32333, 32333+1, 30),
 			);
-					$totalA = $totalB =$totalC =$totalD =$totalE1 =$totalE2 =$totalE3 =$totalF =$totalG =$totalH =$totalJ =$totalK =$totalL =0;
-					$pay_slip_details = array();
-					foreach ($payroll_statement as $ps)
-					{
-						$month = (int)explode('-',$ps->salary_month)[1];
-						$basic_salary  = $ps->basic_salary;
-						$total_allowanse = $ps->total_allowances;
-						$commission = $ps->total_commissions;
-						$other_payments = $ps->total_other_payments;
-
-						$deductions = $this->Employees_model->read_salary_statutory_deductions($user[0]->user_id);
-
-						$get_nssf_deductions = 0;
-						foreach($deductions as $d)
-						{
-							if($d->deduction_title == "NSSF")
-							{
-								if($d->statutory_options == 1)
-								{
-									$get_nssf_deductions = ($d->deduction_amount * $basic_salary) / 100;
-								}else
-								{
-									$get_nssf_deductions = $d->deduction_amount;
-								}
-							}
-						}
-
-						$benefits = $total_allowanse + $commission + $other_payments;
-						$pay_slip_details += [$month => ["bs"=>$basic_salary, "benefits"=>$benefits,"deductions"=>$get_nssf_deductions]];
-
-
-					}
+			$totalA = $totalB =$totalC =$totalD =$totalE1 =$totalE2 =$totalE3 =$totalF =$totalG =$totalH =$totalJ =$totalK =$totalL =0;
+			$pay_slip_details =  $this->pay_slip_details($payroll_statement, $user[0]->user_id);
 
 
 
@@ -4562,37 +4714,7 @@ MONTHLY BENEFIT (RATE DIFFERENCE X LOAN) = ........% X KShs ................... 
 			array(32333, 32333+1, 30),
 		);
 		$totalA = $totalB =$totalC =$totalD =$totalE1 =$totalE2 =$totalE3 =$totalF =$totalG =$totalH =$totalJ =$totalK =$totalL =0;
-		$pay_slip_details = array();
-		foreach ($payroll_statement as $ps)
-		{
-			$month = (int)explode('-',$ps->salary_month)[1];
-			$basic_salary  = $ps->basic_salary;
-			$total_allowanse = $ps->total_allowances;
-			$commission = $ps->total_commissions;
-			$other_payments = $ps->total_other_payments;
-
-			$deductions = $this->Employees_model->read_salary_statutory_deductions($user[0]->user_id);
-
-			$get_nssf_deductions = 0;
-			foreach($deductions as $d)
-			{
-				if($d->deduction_title == "NSSF")
-				{
-					if($d->statutory_options == 1)
-					{
-						$get_nssf_deductions = ($d->deduction_amount * $basic_salary) / 100;
-					}else
-					{
-						$get_nssf_deductions = $d->deduction_amount;
-					}
-				}
-			}
-
-			$benefits = $total_allowanse + $commission + $other_payments;
-			$pay_slip_details += [$month => ["bs"=>$basic_salary, "benefits"=>$benefits,"deductions"=>$get_nssf_deductions]];
-
-
-		}
+		$pay_slip_details =  $this->pay_slip_details($payroll_statement, $user[0]->user_id);
 
 		foreach ($months as $key => $m)
 		{
@@ -4744,34 +4866,6 @@ MONTHLY BENEFIT (RATE DIFFERENCE X LOAN) = ........% X KShs ................... 
 		$pdf->SetY(160);
 		$pdf->SetX(11);
 		$pdf->writeHTML($message);
-
-
-
-
-
-
-//		$html .= '<tr>
-//
-//							<td style="text-align:center">A</td>
-//							<td style="text-align:center">B</td>
-//							<td style="text-align:center">C</td>
-//							<td style="text-align:center">D</td>
-//							<td style="text-align:center">E1</td>
-//
-//   						</tr>';
-		$months = array("January","February","March", "April","May","June","July","August","September","October","November","December");
-
-
-
-//		//employee pin position
-//		$pdf->SetY(45.5);
-//		$pdf->SetX(269);
-//		$pdf->writeHTML($employee_pin);
-
-
-
-		//p9form data
-		$pdf->SetFont('helvetica', '', 9);
 
 		$pdf->Output('p10.pdf', 'I');
 		ob_end_flush();

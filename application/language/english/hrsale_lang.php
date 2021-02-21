@@ -2916,6 +2916,14 @@ $lang['xin_p10a'] = 'Generate P10A Form';
 
 $lang['xin_p10_legend'] = 'P10 Form';
 $lang['xin_p10'] = 'Generate P10 Form';
+
+$lang['xin_nssf_nhif_legend'] = 'NSSF & NHIF';
+$lang['xin_nssf_nhif_report'] = 'NSSF & NHIF Report';
+$lang['xin_type'] = 'Report Type';
+$lang['xin_choose_type'] = 'Select Report Type';
+$lang['xin_nssf'] = 'NSSF';
+$lang['xin_nhif'] = 'NHIF';
+
 ///////////////////////////////////////////////// end hrsale v2.0.1
 /* End of file hrsale_lang.php */
 /* Location: ./system/language/english/hrsale_lang.php */

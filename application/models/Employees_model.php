@@ -1496,6 +1496,8 @@ class Employees_model extends CI_Model {
 			return null;
 		}
 	}
+
+
 	// get employee overtime
 	public function read_salary_overtime($id) {
 	

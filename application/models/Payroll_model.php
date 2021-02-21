@@ -685,6 +685,13 @@
 		return $query->result();
 	}
 
+	public function total_tax_deducted_per_user($emp_id,$year)
+	{
+		$sql = "SELECT SUM(paye) as paye FROM xin_p10a WHERE emp_id = ? AND year = ?";
+		$binds = array($emp_id, $year);
+		return $this->db->query($sql, $binds)->result();
+	}
+
 
 	// Function to add record in table> salary payslip record
 	public function add_salary_payslip_allowances($data){

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 16, 2021 at 12:47 PM
+-- Generation Time: Feb 21, 2021 at 03:25 PM
 -- Server version: 10.3.20-MariaDB-1
 -- PHP Version: 7.3.12-1
 
@@ -894,7 +894,7 @@ CREATE TABLE `xin_employees` (
   `last_name` varchar(200) NOT NULL,
   `username` varchar(200) NOT NULL,
   `email` varchar(200) NOT NULL,
-  `pincode` int(11) NOT NULL,
+  `pincode` varchar(11) NOT NULL,
   `password` varchar(200) NOT NULL,
   `date_of_birth` varchar(200) NOT NULL,
   `gender` varchar(200) NOT NULL,
@@ -965,8 +965,8 @@ CREATE TABLE `xin_employees` (
 --
 
 INSERT INTO `xin_employees` (`user_id`, `employee_id`, `office_shift_id`, `reports_to`, `first_name`, `last_name`, `username`, `email`, `pincode`, `password`, `date_of_birth`, `gender`, `e_status`, `user_role_id`, `department_id`, `sub_department_id`, `designation_id`, `company_id`, `location_id`, `view_companies_id`, `salary_template`, `hourly_grade_id`, `monthly_grade_id`, `date_of_joining`, `date_of_leaving`, `marital_status`, `salary`, `wages_type`, `basic_salary`, `daily_wages`, `salary_ssempee`, `salary_ssempeer`, `salary_income_tax`, `salary_overtime`, `salary_commission`, `salary_claims`, `salary_paid_leave`, `salary_director_fees`, `salary_bonus`, `salary_advance_paid`, `address`, `state`, `city`, `zipcode`, `profile_picture`, `profile_background`, `resume`, `skype_id`, `contact_no`, `facebook_link`, `twitter_link`, `blogger_link`, `linkdedin_link`, `google_plus_link`, `instagram_link`, `pinterest_link`, `youtube_link`, `is_active`, `last_login_date`, `last_logout_date`, `last_login_ip`, `is_logged_in`, `online_status`, `fixed_header`, `compact_sidebar`, `boxed_wrapper`, `leave_categories`, `ethnicity_type`, `blood_group`, `nationality_id`, `citizenship_id`, `created_at`) VALUES
-(1, 'kevin', 1, 0, 'Kevin', 'Kihara', 'kevoh', 'kihashkevo@gmail.com', 0, '$2y$12$DOMLZ9/y/Gqb9wZpJbi8I.A49t.9PIv63JOtkZwE2rYdQX2joPKD.', '2018-03-28', 'Male', 0, 1, 2, 0, 10, 1, 1, '0', 'monthly', 0, 0, '2018-02-01', '', 'Single', '', 1, '150000', '0', '8', '17', '10', '0', '1', '2', '3', '0', '0', '0', 'Test Address', '', '', '', 'profile_1546421723.png', 'profile_background_1519924152.jpg', '', '', '12345678900', '', '', '', '', '', '', '', '', 1, '16-02-2021 12:14:03', '16-02-2021 07:23:06', '127.0.0.1', 1, 1, 'fixed_layout_hrsale', '', '', '0,1,2', 0, 'O+', 113, 113, '2018-02-28 05:30:44'),
-(6, '816028', 1, 0, 'John', 'Doe', 'john', 'john@doe.com', 139753, '$2y$12$ZoOcsRsnGP8XmTcCkFZ4puu0/G76B4nvdJEEMwaxIWck43k8ZKF9q', '2000-12-29', 'Male', 0, 2, 1, 0, 9, 1, 1, '', '', 0, 0, '2020-12-29', '', '', '', 1, '55000', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '00910', '', '', '', '', '', '', '', '0757589568', '', '', '', '', '', '', '', '', 1, '', '', '', 0, 0, '', '', '', '0', 0, NULL, 0, 0, '2020-12-29 07:15:01');
+(1, 'kevin', 1, 0, 'Kevin', 'Kihara', 'kevoh', 'kihashkevo@gmail.com', '0', '$2y$12$DOMLZ9/y/Gqb9wZpJbi8I.A49t.9PIv63JOtkZwE2rYdQX2joPKD.', '2018-03-28', 'Male', 0, 1, 2, 0, 10, 1, 1, '0', 'monthly', 0, 0, '2018-02-01', '', 'Single', '', 1, '150000', '0', '8', '17', '10', '0', '1', '2', '3', '0', '0', '0', 'Test Address', '', '', '', 'profile_1546421723.png', 'profile_background_1519924152.jpg', '', '', '12345678900', '', '', '', '', '', '', '', '', 1, '21-02-2021 10:41:21', '16-02-2021 07:23:06', '127.0.0.1', 1, 1, 'fixed_layout_hrsale', '', '', '0,1,2', 0, 'O+', 113, 113, '2018-02-28 05:30:44'),
+(6, '816028', 1, 0, 'John', 'Doe', 'john', 'john@doe.com', '139753', '$2y$12$ZoOcsRsnGP8XmTcCkFZ4puu0/G76B4nvdJEEMwaxIWck43k8ZKF9q', '2000-12-29', 'Male', 0, 2, 1, 0, 9, 1, 1, '', '', 0, 0, '2020-12-29', '', '', '', 1, '55000', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '00910', '', '', '', '', '', '', '', '0757589568', '', '', '', '', '', '', '', '', 1, '', '', '', 0, 0, '', '', '', '0', 0, NULL, 0, 0, '2020-12-29 07:15:01');
 
 -- --------------------------------------------------------
 
@@ -2430,6 +2430,28 @@ INSERT INTO `xin_office_shift` (`office_shift_id`, `company_id`, `shift_name`, `
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `xin_p10a`
+--
+
+CREATE TABLE `xin_p10a` (
+  `id` int(11) NOT NULL,
+  `emp_id` int(11) NOT NULL,
+  `company_id` int(11) NOT NULL,
+  `emoluments` double NOT NULL DEFAULT 0,
+  `paye` double NOT NULL DEFAULT 0,
+  `year` int(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `xin_p10a`
+--
+
+INSERT INTO `xin_p10a` (`id`, `emp_id`, `company_id`, `emoluments`, `paye`, `year`) VALUES
+(2, 6, 1, 85650, 29850, 2021);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `xin_payment_method`
 --
 
@@ -3046,7 +3068,7 @@ CREATE TABLE `xin_salary_payslips` (
 --
 
 INSERT INTO `xin_salary_payslips` (`payslip_id`, `payslip_key`, `employee_id`, `department_id`, `company_id`, `location_id`, `designation_id`, `salary_month`, `wages_type`, `payslip_type`, `basic_salary`, `daily_wages`, `is_half_monthly_payroll`, `hours_worked`, `total_allowances`, `total_commissions`, `total_statutory_deductions`, `total_other_payments`, `total_loan`, `total_overtime`, `saudi_gosi_percent`, `saudi_gosi_amount`, `statutory_deductions`, `is_advance_salary_deduct`, `advance_salary_amount`, `net_salary`, `grand_net_salary`, `other_payment`, `payment_method`, `pay_comments`, `is_payment`, `year_to_date`, `status`, `created_at`) VALUES
-(21, 'bAeUiGh2ZxuJpMTzFCjaP5cnOtvXdI87gYwWDqmS', 6, 1, 1, 1, 9, '2020-01', 1, 'full_monthly', '55000', '', 0, '0', '5500', '0', '3250', '0', '7500', '0', '0', '0', '', 0, '0', '49750', '', '', 0, '', 1, '2021-02-16', 0, '2021-02-16 01:32:15'),
+(21, 'bAeUiGh2ZxuJpMTzFCjaP5cnOtvXdI87gYwWDqmS', 6, 1, 1, 1, 9, '2020-01', 1, 'full_monthly', '55000', '', 0, '0', '5500', '0', '3250', '0', '7500', '0', '0', '0', '', 0, '0', '49750', '', '', 0, '', 1, '2021-02-16', 2, '2021-02-16 01:32:15'),
 (22, '2lBgd4NkUAOSHCV90bXtfpKjIEqQGMiTsLw1v8mP', 6, 1, 1, 1, 9, '2020-02', 1, 'full_monthly', '55000', '', 0, '0', '5500', '0', '3250', '0', '7500', '0', '0', '0', '', 0, '0', '49750', '', '', 0, '', 1, '2021-02-16', 0, '2021-02-16 01:33:10');
 
 -- --------------------------------------------------------
@@ -4452,6 +4474,14 @@ ALTER TABLE `xin_office_shift`
   ADD PRIMARY KEY (`office_shift_id`);
 
 --
+-- Indexes for table `xin_p10a`
+--
+ALTER TABLE `xin_p10a`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `emp_id` (`emp_id`),
+  ADD KEY `company_id` (`company_id`);
+
+--
 -- Indexes for table `xin_payment_method`
 --
 ALTER TABLE `xin_payment_method`
@@ -5350,6 +5380,12 @@ ALTER TABLE `xin_office_shift`
   MODIFY `office_shift_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `xin_p10a`
+--
+ALTER TABLE `xin_p10a`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `xin_payment_method`
 --
 ALTER TABLE `xin_payment_method`
@@ -5696,6 +5732,17 @@ ALTER TABLE `xin_user_roles`
 --
 ALTER TABLE `xin_warning_type`
   MODIFY `warning_type_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `xin_p10a`
+--
+ALTER TABLE `xin_p10a`
+  ADD CONSTRAINT `xin_p10a_ibfk_1` FOREIGN KEY (`emp_id`) REFERENCES `xin_employees` (`user_id`),
+  ADD CONSTRAINT `xin_p10a_ibfk_2` FOREIGN KEY (`company_id`) REFERENCES `xin_companies` (`company_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -3704,12 +3704,6 @@ class Payroll extends MY_Controller {
 	private function p9()
 	{
 
-
-		$session = $this->session->userdata('username');
-		if(empty($session)){
-			redirect('admin/');
-		}
-
 		$emplyee_id = $this->input->post('employee_id');
 		$year = (int)explode('-',$this->input->post('month_year'))[0];
 
@@ -3742,9 +3736,6 @@ class Payroll extends MY_Controller {
 		$date_to = date('Y-m-d h:i:s', strtotime('31-12-'.$payroll_year));
 		$payroll_statement = $this->Payroll_model->get_payslips_for_p9($emplyee_id,$date_from, $date_to);
 
-		//remove those that are of not of the wanted year
-
-
 
 		$header_string = "DOMESTIC TAXES DEPARTMENT";
 
@@ -3765,7 +3756,7 @@ class Payroll extends MY_Controller {
 		$pdf->SetFont('helvetica', 'B', 12);
 		$pdf->Cell(280,5,$header_string,0,1,'C');
 		$pdf->Ln(1);
-		$text = "Tax Deduction Year ".((int)date('Y')-1);
+		$text = "Tax Deduction Year ".$year;
 		$pdf->Cell(280,5, $text,0,1,'C');
 
 		$pdf->SetFont('helvetica', 'B', 8);
@@ -4439,6 +4430,354 @@ MONTHLY BENEFIT (RATE DIFFERENCE X LOAN) = ........% X KShs ................... 
 		ob_end_flush();
 	}
 
+	public function generate_p10()
+	{
+		$session = $this->session->userdata('username');
+		if (empty($session)) {
+			redirect('admin/');
+		}
+		$data['title'] = $this->lang->line('xin_p10') . ' | ' . $this->Xin_model->site_title();
+		$data['all_employees'] = $this->Xin_model->all_employees();
+		$data['path_url'] = 'generate_p10';
+		$data['breadcrumbs'] = $this->lang->line('xin_p10');
+		$role_resources_ids = $this->Xin_model->user_role_resource();
+		if (in_array('467', $role_resources_ids)) {
+			$data['subview'] = $this->load->view("admin/payroll/generate_p10", $data, TRUE);
+			$this->load->view('admin/layout/layout_main', $data); //page load
+		} else {
+			redirect('admin/dashboard');
+		}
+	}
+
+	public function p10_form()
+	{
+
+		$emplyee_id = $this->input->post('employee_id');
+		$year = (int)explode('-',$this->input->post('month_year'))[0];
+
+		$pdf = new TCPDF("l", PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+		$user = $this->Xin_model->read_user_info($emplyee_id);
+		$company =  $this->Xin_model->read_company_info($user[0]->company_id);
+		$employee_main_name = ucwords($user[0]->last_name);
+		$employee_other_names =  ucwords($user[0]->first_name);
+		$employee_name = $employee_other_names.' '.$employee_main_name;
+		$employer_logo = base_url().'uploads/logo/kra_image.png';
+
+		$employer_pin = $company[0]->government_tax;
+
+		$payroll_year = $year;
+		$date_from = date('Y-m-d h:i:s',strtotime('1-1-'.$payroll_year));
+		$date_to = date('Y-m-d h:i:s', strtotime('31-12-'.$payroll_year));
+		$payroll_statement = $this->Payroll_model->get_payslips_for_p9($emplyee_id,$date_from, $date_to);
+
+
+		$header_string = "DOMESTIC TAXES DEPARTMENT";
+
+
+		$pdf->SetCreator($employee_name);
+		$pdf->SetAuthor($employee_name);
+		$pdf->setFooterData(array(0,64,0), array(0,64,128));
+		$pdf->setFooterFont(Array('helvetica', '', 9));
+		$pdf->SetAutoPageBreak(TRUE, 0);
+		$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+		//$pdf->SetFont('dejavusans', '', 10, '', true);
+		//$pdf->SetHeaderData($employer_logo, 20, $employer, $header_string);
+		$pdf->SetPrintHeader(false);
+		$pdf->AddPage();
+		$pdf->Ln(5);
+		$pdf->Image($employer_logo, 6, 5, '', '', 'PNG', false, 'C', false, 300, 'C', false, false, 0, false, false, false);
+		$pdf->Ln(1);
+		$pdf->SetFont('helvetica', 'B', 12);
+		$pdf->Cell(280,5,$header_string,0,1,'C');
+
+
+		//P10 TITLE
+		$pdf->SetFont('helvetica', 'B', 12);
+		$pdf->SetY(20.5);
+		$pdf->SetX(11);
+		$pdf->writeHTML('P10');
+
+		//employers pin
+		$pdf->SetY(30.5);
+		$pdf->SetX(240);
+		$pdf->writeHTML('EMPLOYER\'S PIN');
+
+		$pdf->SetFont('helvetica', '', 12);
+		$pdf->SetY(35.5);
+		$pdf->SetX(244);
+		$pdf->writeHTML($employer_pin);
+
+		$pdf->SetFont('helvetica', 'B', 12);
+
+
+
+		$pdf->Ln(1);
+		$text = "P.A.Y.E - EMPLOYER'S CERTIFICATE ";
+		$pdf->Cell(280,5, $text,0,1,'C');
+		$pdf->Ln(1);
+		$text = "YEAR ".$year;
+		$pdf->Cell(280,5, $text,0,1,'C');
+
+
+		//tax deduted as on p10A
+		$total_paye = $this->Payroll_model ->total_tax_deducted_per_user($emplyee_id,$year)[0]->paye;
+		$benefits = $this->Employees_model->set_employee_allowances($user[0]->user_id)->result();
+		$total_allowanses = 0;
+		foreach ($benefits as $b)
+		{
+			$total_allowanses+= $b->allowance_amount;
+
+		}
+
+
+
+		$pdf->SetFont('helvetica', '', 8);
+		$pdf->SetY(60.5);
+		$pdf->SetX(11);
+		$html = '<b>To Senior Assistant Commissioner</b><br><br>................................................................<br><br>
+				We/I forward herewith ........................................ Tax Deduction Cards (P9A/P9B) showing the total tax
+				deducted (as listed on P.10A) amounting to Kshs. '.number_format($total_paye,2,'.',',').'<br><br><br>This total tax has been paid as follows:-';
+		$pdf->writeHTML($html);
+
+		$pdf->SetY(90.5);
+		$pdf->SetX(11);
+
+		$html = '
+				<table cellspacing="0" cellpadding="1" border="1">
+					
+						<tr>
+							  <th style="text-align:center"><b>Months</b></th>
+							  <th style="text-align:center"><b>PAYE TAX<br>Ksh</b> </th>
+							  <th style="text-align:center"><b>AUDIT TAX, INTEREST/PENALTY<br>Kshs.</b></th>
+							  <th style="text-align:center"><b>FRINGE BENEFIT TAX <br>Kshs</b></th>
+							  <th style="text-align:center"><b>DATE PAID PER (RECEIVING BANK)</b></th>
+						</tr>	
+						';
+
+
+		$months = array("January","February","March", "April","May","June","July","August","September","October","November","December");
+		$taxes = array(
+			array(0,24000,10),
+			array(24000, 32333, 25),
+			array(32333, 32333+1, 30),
+		);
+		$totalA = $totalB =$totalC =$totalD =$totalE1 =$totalE2 =$totalE3 =$totalF =$totalG =$totalH =$totalJ =$totalK =$totalL =0;
+		$pay_slip_details = array();
+		foreach ($payroll_statement as $ps)
+		{
+			$month = (int)explode('-',$ps->salary_month)[1];
+			$basic_salary  = $ps->basic_salary;
+			$total_allowanse = $ps->total_allowances;
+			$commission = $ps->total_commissions;
+			$other_payments = $ps->total_other_payments;
+
+			$deductions = $this->Employees_model->read_salary_statutory_deductions($user[0]->user_id);
+
+			$get_nssf_deductions = 0;
+			foreach($deductions as $d)
+			{
+				if($d->deduction_title == "NSSF")
+				{
+					if($d->statutory_options == 1)
+					{
+						$get_nssf_deductions = ($d->deduction_amount * $basic_salary) / 100;
+					}else
+					{
+						$get_nssf_deductions = $d->deduction_amount;
+					}
+				}
+			}
+
+			$benefits = $total_allowanse + $commission + $other_payments;
+			$pay_slip_details += [$month => ["bs"=>$basic_salary, "benefits"=>$benefits,"deductions"=>$get_nssf_deductions]];
+
+
+		}
+
+		foreach ($months as $key => $m)
+		{
+
+
+			//print_r($pay_slip_details[$key])
+
+			if(array_key_exists($key+1, $pay_slip_details))
+			{
+
+
+				$bs = $pay_slip_details[$key+1]["bs"];
+
+				$totalA += $bs;
+
+				$b = $pay_slip_details[$key+1]["benefits"];
+				$totalB += $b;
+				$gross = $bs + $total_allowanses;
+				$totalD +=$gross;
+				$e1 = 0.3 * $bs;
+				$totalE1 += $e1;
+				$e2 = $pay_slip_details[$key+1]["deductions"];
+				$e3 = 20000;
+				if($totalE2 >= 240000)
+				{
+					$totalE2+= 0;
+					$totalE2 = 240000;
+					$e2 = 0;
+				}else
+				{
+					$totalE2  += $e2;
+				}
+
+				$totalE3 +=$e3;
+
+				$f = 0;
+				$totalF += $f;
+				$c = 0;
+				$totalC += $c;
+
+				$lowest_e = $this->get_smallest($e1,$e2,$e3);
+
+				$g = $lowest_e + $f;
+
+				$totalG += $g;
+
+				$h  = $gross -$g;
+
+				$totalH += $h;
+
+				$taxcharged = 0;
+
+				if($h > $taxes[1][0] && $h <= $taxes[1][1])
+				{
+					$taxcharged = $h * 0.25;
+				}else
+					if($h > $taxes[2][1])
+					{
+						$taxcharged = $h * 0.30;
+					}else
+					{
+						$taxcharged = 0;
+					}
+				$j = $taxcharged;
+				$totalJ += $j;
+
+
+				if($j > 0)
+				{
+					$k = 2400;
+				}else{
+					$k = 0;
+				}
+
+				$totalK +=$k;
+
+				$l = $j-$k;
+				$totalL +=$l;
+
+
+
+			}else
+			{
+				$bs = 0;
+				$totalA += $bs;
+				$b =0;
+				$totalB += $b;
+				$gross = $bs + $b;
+				$totalD +=$gross;
+				$e1 = 0.3 * $bs;
+				$totalE1 += $e1;
+				$e2 = 0;
+				$e3 = 0;
+				$totalE2  += $e2;
+				$totalE3 +=$e3;
+				$f = 0;
+				$totalF += $f;
+				$c = 0;
+				$totalC += $c;
+				$lowest_e = $this->get_smallest($e1,$e2,$e3);
+				$g = $lowest_e + $f;
+				$totalG += $g;
+				$h  = $gross -$g;
+				$totalH += $h;
+				$j = 0;
+				$totalJ += $j;
+				$k = 0;
+				$totalK +=$k;
+				$l = $j-$k;
+				$totalL +=$l;
+			}
+
+
+			$html.= '<tr>
+							<td>'.$m.'</td>
+							<td style="text-align:right">'.number_format($l,2,'.',',').'</td>
+							<td style="text-align:right">'.number_format(0,2,'.',',').'</td>
+							<td style="text-align:right">'.number_format(0,2,'.',',').'</td>
+							<td style="text-align:right"></td>
+   						</tr>';
+		}
+
+		$html.= '<tr>
+						<td><b>TOTAL TAX SHS</b></td>
+						<td style="text-align:right"><b>'.number_format($totalL,2,'.',',').'</b></td>
+						<td style="text-align:right"><b>'.number_format(0,2,'.',',').'</b></td>
+						<td style="text-align:right"><b>'.number_format(0,2,'.',',').'</b></td>
+						<td style="text-align:right"></td>						
+   				</tr>';
+
+
+		$html .= '</table>';
+
+
+		$pdf->writeHTML($html);
+
+		$message = 'NOTE:-<br>
+					(1) Attach photostat copies of ALL the Pay-In Credit Slips (P11s) for the year.<br>
+					(2) Complete this form in tripicate sending the top two copies w ith the enclosures to your <b>Income Tax Office not later than 28thFebruary</b><br>
+					(3) Provide statistical information required by the Central Bureau of Statistics.<br>
+					We/I certify that the particulars entered above are correct.<br>
+					<b>NAME OF EMPLOYER: </b> '.$company[0]->name.'<br>
+					<b>ADDRES:S</b> '.$company[0]->address_1.'<br><br>
+					<b>SIGNATURE</b> ........................................................................<br>
+					<b>DATE: </b>'.date('d-m-y').' <br>';
+
+
+
+		$pdf->SetY(160);
+		$pdf->SetX(11);
+		$pdf->writeHTML($message);
+
+
+
+
+
+
+//		$html .= '<tr>
+//
+//							<td style="text-align:center">A</td>
+//							<td style="text-align:center">B</td>
+//							<td style="text-align:center">C</td>
+//							<td style="text-align:center">D</td>
+//							<td style="text-align:center">E1</td>
+//
+//   						</tr>';
+		$months = array("January","February","March", "April","May","June","July","August","September","October","November","December");
+
+
+
+//		//employee pin position
+//		$pdf->SetY(45.5);
+//		$pdf->SetX(269);
+//		$pdf->writeHTML($employee_pin);
+
+
+
+		//p9form data
+		$pdf->SetFont('helvetica', '', 9);
+
+		$pdf->Output('p10.pdf', 'I');
+		ob_end_flush();
+
+	}
+
 
 	public function generate_p10a()
 	{
@@ -4447,7 +4786,6 @@ MONTHLY BENEFIT (RATE DIFFERENCE X LOAN) = ........% X KShs ................... 
 			redirect('admin/');
 		}
 		$data['title'] = $this->lang->line('xin_p9').' | '.$this->Xin_model->site_title();
-		$data['all_employees'] = $this->Xin_model->all_employees();
 		$data['all_companies'] = $this->Xin_model->get_companies();
 		$data['path_url'] = 'generate_p10a';
 		$data['breadcrumbs'] = $this->lang->line('xin_p10a');
@@ -4461,6 +4799,16 @@ MONTHLY BENEFIT (RATE DIFFERENCE X LOAN) = ........% X KShs ................... 
 	}
 
 	public function p10a_form()
+	{
+
+		$session = $this->session->userdata('username');
+		if(empty($session)){
+			redirect('admin/');
+		}
+		$this->p10a();
+	}
+
+	private function p10a()
 	{
 
 		$year = (int)explode('-',$this->input->post('month_year'))[0];

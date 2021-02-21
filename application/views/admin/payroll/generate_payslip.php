@@ -43,6 +43,12 @@ if($system[0]->is_half_monthly==1){
 	  <?php } ?>
 
 	  <?php if(in_array('467',$role_resources_ids)) { ?>
+	  <li class="nav-item clickable"> <a href="<?php echo site_url('admin/payroll/generate_p10/');?>" data-link-data="<?php echo site_url('admin/payroll/advance_salary/');?>" class="mb-3 nav-link hrsale-link"> <span class="sw-icon ion ion-ios-cash"></span> <?php echo $this->lang->line('xin_p10');?>
+			  <div class="text-muted small"><?php echo $this->lang->line('xin_p10_legend');?></div>
+		  </a> </li>
+	  <?php } ?>
+
+	  <?php if(in_array('467',$role_resources_ids)) { ?>
 		  <li class="nav-item clickable"> <a href="<?php echo site_url('admin/payroll/generate_p10a/');?>" data-link-data="<?php echo site_url('admin/payroll/advance_salary/');?>" class="mb-3 nav-link hrsale-link"> <span class="sw-icon ion ion-ios-cash"></span> <?php echo $this->lang->line('xin_p10a');?>
 				  <div class="text-muted small"><?php echo $this->lang->line('xin_p10a_legend');?></div>
 			  </a> </li>

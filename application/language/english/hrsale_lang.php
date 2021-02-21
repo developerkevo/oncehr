@@ -2911,8 +2911,11 @@ $lang['xin_p9'] = 'Generate P9 A Form';
 $lang['xin_p9_g'] = 'Generate';
 $lang['xin_year'] = 'Year-Month (Year)';
 
-$lang['xin_p10a_legend'] = 'P10A Forms';
+$lang['xin_p10a_legend'] = 'P10A Form';
 $lang['xin_p10a'] = 'Generate P10A Form';
+
+$lang['xin_p10_legend'] = 'P10 Form';
+$lang['xin_p10'] = 'Generate P10 Form';
 ///////////////////////////////////////////////// end hrsale v2.0.1
 /* End of file hrsale_lang.php */
 /* Location: ./system/language/english/hrsale_lang.php */

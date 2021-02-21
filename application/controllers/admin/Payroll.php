@@ -3692,7 +3692,16 @@ class Payroll extends MY_Controller {
 		}
 	}
 	 //p9Form
+
 	public function p9_form()
+	{
+		$session = $this->session->userdata('username');
+		if(empty($session)){
+			redirect('admin/');
+		}
+		$this->p9();
+	}
+	private function p9()
 	{
 
 
@@ -3705,12 +3714,14 @@ class Payroll extends MY_Controller {
 		$year = (int)explode('-',$this->input->post('month_year'))[0];
 
 		$pdf = new TCPDF("l", PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-		$user = $this->Xin_model->read_user_info(6);
+		$user = $this->Xin_model->read_user_info($emplyee_id);
 		$company =  $this->Xin_model->read_company_info($user[0]->company_id);
 		$employee_main_name = ucwords($user[0]->last_name);
 		$employee_other_names =  ucwords($user[0]->first_name);
 		$employee_name = $employee_other_names.' '.$employee_main_name;
 		$employer_logo = base_url().'uploads/logo/kra_image.png';
+
+
 
 		$employee_pin = $user[0]->pincode;
 		$employer =$company[0]->name;
@@ -4404,11 +4415,196 @@ MONTHLY BENEFIT (RATE DIFFERENCE X LOAN) = ........% X KShs ................... 
 						</p>';
 		$pdf->writeHTML($message, true, false, false, false, '');
 
-		$pdf->Output($employee_main_name.' '.$employee_other_names.'_p9.pdf', 'I');
 
+
+		$data = array(
+			"emp_id" =>	$emplyee_id,
+			"emoluments" => $totalH - $totalL,
+			"paye" => $totalL,
+			"year" => $payroll_year,
+			"company_id" => $company[0]->company_id
+		);
+
+		if($this->Payroll_model->duplicates_p10_a($emplyee_id,$payroll_year,$company[0]->company_id) > 0)
+		{
+			$pdf->Output($employee_main_name.' '.$employee_other_names.'_p9.pdf', 'I');
+		}else{
+
+			if($this->Payroll_model->add_p10a_data($data))
+			{
+				$pdf->Output($employee_main_name.' '.$employee_other_names.'_p9.pdf', 'I');
+			}
+		}
 
 		ob_end_flush();
 	}
+
+
+	public function generate_p10a()
+	{
+		$session = $this->session->userdata('username');
+		if(empty($session)){
+			redirect('admin/');
+		}
+		$data['title'] = $this->lang->line('xin_p9').' | '.$this->Xin_model->site_title();
+		$data['all_employees'] = $this->Xin_model->all_employees();
+		$data['all_companies'] = $this->Xin_model->get_companies();
+		$data['path_url'] = 'generate_p10a';
+		$data['breadcrumbs'] = $this->lang->line('xin_p10a');
+		$role_resources_ids = $this->Xin_model->user_role_resource();
+		if(in_array('467',$role_resources_ids)) {
+			$data['subview'] = $this->load->view("admin/payroll/generate_p10a", $data, TRUE);
+			$this->load->view('admin/layout/layout_main', $data); //page load
+		} else {
+			redirect('admin/dashboard');
+		}
+	}
+
+	public function p10a_form()
+	{
+
+		$year = (int)explode('-',$this->input->post('month_year'))[0];
+		$company_id = $this->input->post('company_id');
+		$company = $this->Xin_model->read_company_info($company_id);
+
+		$company_name = $company[0]->name;
+		$company_pin = $company[0]->government_tax;
+
+		$pdf = new TCPDF("l", PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+		$employer_logo = base_url().'uploads/logo/kra_image.png';
+		$header_string = "DOMESTIC TAXES DEPARTMENT ";
+
+		$pdf->SetCreator($company_name);
+		$pdf->SetAuthor($company_name);
+		$pdf->setFooterData(array(0,64,0), array(0,64,128));
+		$pdf->setFooterFont(Array('helvetica', '', 9));
+		$pdf->SetAutoPageBreak(TRUE, 0);
+		$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+		//$pdf->SetFont('dejavusans', '', 10, '', true);
+		//$pdf->SetHeaderData($employer_logo, 20, $employer, $header_string);
+		$pdf->SetPrintHeader(false);
+		$pdf->AddPage();
+		$pdf->Ln(5);
+		$pdf->Image($employer_logo, 6, 5, '', '', 'PNG', false, 'C', false, 300, 'C', false, false, 0, false, false, false);
+		$pdf->Ln(1);
+		$pdf->SetFont('helvetica', 'B', 12);
+		$pdf->Ln(1);
+		$pdf->Cell(280,5,$header_string,0,1,'C');
+
+
+		//title
+		$pdf->SetY(20.5);
+		$pdf->SetX(11);
+		$pdf->writeHTML('P10A');
+		$pdf->SetFont('helvetica', 'B', 14);
+		$text = '<p style="text-align: center">P.A.Y.E SUPPORTING LIST FOR END OF YEAR CERTIFICATE: YEAR '.$year.'</p>';
+		$pdf->SetY(25.5);
+		$pdf->SetX(11);
+		$pdf->writeHTML($text);
+
+		$pdf->SetY(45.5);
+		$pdf->SetX(230);
+		$pdf->writeHTML("PIN: ");
+
+		$pdf->SetFont('helvetica', '', 14);
+		$pdf->SetY(45.5);
+		$pdf->SetX(240);
+		$pdf->writeHTML($company_pin);
+
+
+		$pdf->SetFont('helvetica', 'B', 14);
+		$pdf->SetY(45.5);
+		$pdf->SetX(11);
+		$pdf->writeHTML("EMPLOYER'S NAME: ");
+
+		$pdf->SetFont('helvetica', '', 14);
+		$pdf->SetY(45.5);
+		$pdf->SetX(63);
+		$pdf->writeHTML($company_name);
+
+		$pdf->SetFont('helvetica', '', 12);
+		$pdf->SetY(53.5);
+		$pdf->SetX(11);
+
+		$html  ='
+				<table cellspacing="0" cellpadding="1" border="1">
+					
+						<tr>
+							  <th style="text-align:center "><b>EMPLOYEE\'S PIN</b></th>
+							  <th style="text-align:center "><b>EMPLOYEE\'S NAME </b></th>
+							  <th style="text-align:center "><b>TOTAL EMOLUMENTS <br>Kshs.</b></th>
+							  <th style="text-align:center "><b>PAYE DEDUCTED <br>Kshs</b></th>
+						</tr>';
+
+
+
+
+
+		$p10_a_data = $this->Payroll_model ->get_p10a_data($year,$company_id);
+
+		$total_omoluments = 0;
+		$total_paye= 0;
+
+		foreach ($p10_a_data as $data)
+		{
+			$total_omoluments += $data->emoluments;
+			$total_paye += $data->paye;
+
+			$html .='<tr>
+							  <td style="text-align:left ">'.$data->pincode.'</td>
+							  <td style="text-align:left ">'.$data->first_name.' '.$data->last_name .'</td>
+							  <td style="text-align:right ">'.number_format($data->emoluments,2,'.',',').'</td>
+							  <td style="text-align:right ">'.number_format($data->paye,2,'.',',').'</td>
+						</tr>';
+		}
+
+		$html .='<tr>
+							  <td style="text-align:left "></td>
+							  <td style="text-align:left "><b>TOTAL EMOLUMENTS </b></td>
+							  <td style="text-align:right;"><b>'.number_format($total_omoluments,2,'.',',').'</b></td>
+							  <td style="text-align:right; background-color:#d2d6de "></td>
+						</tr>';
+		$html .='<tr>
+							  <td style="text-align:left "></td>
+							  <td style="text-align:left "><b>TOTAL PAYE TAX </b></td>
+							  <td style="text-align:right; background-color:#d2d6de"></td>
+							  <td style="text-align:right; "><b>'.number_format($total_paye,2,'.',',').'</b></td>
+						</tr>';
+
+		$html .='<tr>
+							  <td style="text-align:left "></td>
+							  <td style="text-align:left "><b>TOTAL WCPS </b></td>
+							  <td style="text-align:right; background-color:#d2d6de"></td>
+							  <td style="text-align:right; "></td>
+							  
+						</tr>';
+
+		$html .='<tr>
+							  <td style="text-align:left "></td>
+							  <td style="text-align:left " colspan="2"><b>*TOTAL TAX ON LUMP SUM/AUDIT TAX/INTEREST/PENALTY</b></td>
+							  <td style="text-align:right; "></td>
+							  
+						</tr>';
+
+		$html .='<tr>
+							  <td style="text-align:left "></td>
+							  <td style="text-align:left " colspan="2"><b>TOTAL TAX C/F TO NEXT LIST</b></td>
+							  <td style="text-align:right; "></td>
+							  
+						</tr>';
+
+		$html  .='</table>';
+		$pdf->writeHTML($html);
+//		print_r($p10_a_data);
+
+//		$pdf->Ln('1');
+		$pdf->Cell(11,5,'NOTE TO EMPLOYER: ATTACH TWO COPIES OF THIS LIST TO END OF YEAR CERTIFICATE (P10)','','','L');
+
+
+		$pdf->Output('p10a.pdf', 'I');
+		ob_end_flush();
+	}
+
 
 	private function get_smallest($a,$b,$c)
 	{

@@ -655,6 +655,37 @@
 			return false;
 		}
 	}
+
+	public function add_p10a_data($data)
+	{
+		$this->db->insert("xin_p10a", $data);
+		if($this->db->affected_rows() > 0)
+		{
+			return true;
+		}else
+		{
+			return false;
+		}
+	}
+
+	public function  duplicates_p10_a($emp_id,$year,$company_id)
+	{
+		$sql = "SELECT emp_id, year, company_id FROM xin_p10a WHERE emp_id = ? AND year = ? AND company_id = ? ";
+		$binds = array($emp_id,$year, $company_id);
+		$query = $this->db->query($sql, $binds);
+		return $query->num_rows();
+	}
+
+	public function get_p10a_data($year,$company_id)
+	{
+		$sql = "SELECT p.emoluments, p.paye, emp.first_name, emp.last_name, emp.pincode FROM xin_p10a p 
+    	INNER JOIN xin_employees emp ON p.emp_id = emp.	user_id WHERE p.year = ? AND p.company_id = ?";
+		$binds = array($year, $company_id);
+		$query = $this->db->query($sql, $binds);
+		return $query->result();
+	}
+
+
 	// Function to add record in table> salary payslip record
 	public function add_salary_payslip_allowances($data){
 		$this->db->insert('xin_salary_payslip_allowances', $data);

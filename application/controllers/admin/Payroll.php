@@ -3799,10 +3799,8 @@ class Payroll extends MY_Controller {
 
 		$pdf->writeHTML($html);
 
-		$pdf->Output($employee_main_name.' '.$employee_other_names.'_p9.pdf', 'I');
+		$pdf->Output($employee_main_name.' '.$employee_other_names.'_'.$type.'_pdf', 'I');
 		ob_end_flush();
-
-
 	}
 
 	private function pay_slip_details($payroll_statement, $emp_id)

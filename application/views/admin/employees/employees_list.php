@@ -332,12 +332,26 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
                 <input class="form-control" placeholder="<?php echo $this->lang->line('xin_pincode');?>" name="pin_code" type="text" value="<?php echo $employee_pincode;?>">
               </div>
             </div>
-            <div class="col-md-9">
+            <div class="col-md-3">
               <div class="form-group">
                 <label for="address"><?php echo $this->lang->line('xin_employee_address');?></label>
                 <input type="text" class="form-control" placeholder="<?php echo $this->lang->line('xin_employee_address');?>" name="address">
               </div>
             </div>
+
+			  <div class="col-md-3">
+				  <div class="form-group">
+					  <label for="nssf_no"><?php echo $this->lang->line('xin_employee_nssf');?></label>
+					  <input type="text" class="form-control" placeholder="<?php echo $this->lang->line('xin_employee_nssf');?>" name="nssf_no" required>
+				  </div>
+			  </div>
+
+			  <div class="col-md-3">
+				  <div class="form-group">
+					  <label for="nhif_no"><?php echo $this->lang->line('xin_employee_nhif');?></label>
+					  <input type="text" class="form-control" placeholder="<?php echo $this->lang->line('xin_employee_nhif');?>" name="nhif_no" required>
+				  </div>
+			  </div>
           </div>
         </div>
         <?php $count_module_attributes = $this->Custom_fields_model->count_module_attributes();?>

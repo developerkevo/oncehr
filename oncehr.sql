@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 21, 2021 at 03:25 PM
+-- Generation Time: Feb 22, 2021 at 10:47 AM
 -- Server version: 10.3.20-MariaDB-1
 -- PHP Version: 7.3.12-1
 
@@ -895,6 +895,8 @@ CREATE TABLE `xin_employees` (
   `username` varchar(200) NOT NULL,
   `email` varchar(200) NOT NULL,
   `pincode` varchar(11) NOT NULL,
+  `nssf_no` varchar(20) DEFAULT NULL,
+  `nhif_no` varchar(20) DEFAULT NULL,
   `password` varchar(200) NOT NULL,
   `date_of_birth` varchar(200) NOT NULL,
   `gender` varchar(200) NOT NULL,
@@ -964,9 +966,9 @@ CREATE TABLE `xin_employees` (
 -- Dumping data for table `xin_employees`
 --
 
-INSERT INTO `xin_employees` (`user_id`, `employee_id`, `office_shift_id`, `reports_to`, `first_name`, `last_name`, `username`, `email`, `pincode`, `password`, `date_of_birth`, `gender`, `e_status`, `user_role_id`, `department_id`, `sub_department_id`, `designation_id`, `company_id`, `location_id`, `view_companies_id`, `salary_template`, `hourly_grade_id`, `monthly_grade_id`, `date_of_joining`, `date_of_leaving`, `marital_status`, `salary`, `wages_type`, `basic_salary`, `daily_wages`, `salary_ssempee`, `salary_ssempeer`, `salary_income_tax`, `salary_overtime`, `salary_commission`, `salary_claims`, `salary_paid_leave`, `salary_director_fees`, `salary_bonus`, `salary_advance_paid`, `address`, `state`, `city`, `zipcode`, `profile_picture`, `profile_background`, `resume`, `skype_id`, `contact_no`, `facebook_link`, `twitter_link`, `blogger_link`, `linkdedin_link`, `google_plus_link`, `instagram_link`, `pinterest_link`, `youtube_link`, `is_active`, `last_login_date`, `last_logout_date`, `last_login_ip`, `is_logged_in`, `online_status`, `fixed_header`, `compact_sidebar`, `boxed_wrapper`, `leave_categories`, `ethnicity_type`, `blood_group`, `nationality_id`, `citizenship_id`, `created_at`) VALUES
-(1, 'kevin', 1, 0, 'Kevin', 'Kihara', 'kevoh', 'kihashkevo@gmail.com', '0', '$2y$12$DOMLZ9/y/Gqb9wZpJbi8I.A49t.9PIv63JOtkZwE2rYdQX2joPKD.', '2018-03-28', 'Male', 0, 1, 2, 0, 10, 1, 1, '0', 'monthly', 0, 0, '2018-02-01', '', 'Single', '', 1, '150000', '0', '8', '17', '10', '0', '1', '2', '3', '0', '0', '0', 'Test Address', '', '', '', 'profile_1546421723.png', 'profile_background_1519924152.jpg', '', '', '12345678900', '', '', '', '', '', '', '', '', 1, '21-02-2021 10:41:21', '16-02-2021 07:23:06', '127.0.0.1', 1, 1, 'fixed_layout_hrsale', '', '', '0,1,2', 0, 'O+', 113, 113, '2018-02-28 05:30:44'),
-(6, '816028', 1, 0, 'John', 'Doe', 'john', 'john@doe.com', '139753', '$2y$12$ZoOcsRsnGP8XmTcCkFZ4puu0/G76B4nvdJEEMwaxIWck43k8ZKF9q', '2000-12-29', 'Male', 0, 2, 1, 0, 9, 1, 1, '', '', 0, 0, '2020-12-29', '', '', '', 1, '55000', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '00910', '', '', '', '', '', '', '', '0757589568', '', '', '', '', '', '', '', '', 1, '', '', '', 0, 0, '', '', '', '0', 0, NULL, 0, 0, '2020-12-29 07:15:01');
+INSERT INTO `xin_employees` (`user_id`, `employee_id`, `office_shift_id`, `reports_to`, `first_name`, `last_name`, `username`, `email`, `pincode`, `nssf_no`, `nhif_no`, `password`, `date_of_birth`, `gender`, `e_status`, `user_role_id`, `department_id`, `sub_department_id`, `designation_id`, `company_id`, `location_id`, `view_companies_id`, `salary_template`, `hourly_grade_id`, `monthly_grade_id`, `date_of_joining`, `date_of_leaving`, `marital_status`, `salary`, `wages_type`, `basic_salary`, `daily_wages`, `salary_ssempee`, `salary_ssempeer`, `salary_income_tax`, `salary_overtime`, `salary_commission`, `salary_claims`, `salary_paid_leave`, `salary_director_fees`, `salary_bonus`, `salary_advance_paid`, `address`, `state`, `city`, `zipcode`, `profile_picture`, `profile_background`, `resume`, `skype_id`, `contact_no`, `facebook_link`, `twitter_link`, `blogger_link`, `linkdedin_link`, `google_plus_link`, `instagram_link`, `pinterest_link`, `youtube_link`, `is_active`, `last_login_date`, `last_logout_date`, `last_login_ip`, `is_logged_in`, `online_status`, `fixed_header`, `compact_sidebar`, `boxed_wrapper`, `leave_categories`, `ethnicity_type`, `blood_group`, `nationality_id`, `citizenship_id`, `created_at`) VALUES
+(1, 'kevin', 1, 0, 'Kevin', 'Kihara', 'kevoh', 'kihashkevo@gmail.com', '0', '12345NSSF', '9876543NHIF', '$2y$12$DOMLZ9/y/Gqb9wZpJbi8I.A49t.9PIv63JOtkZwE2rYdQX2joPKD.', '2018-03-28', 'Male', 0, 1, 2, 0, 10, 1, 1, '0', 'monthly', 0, 0, '2018-02-01', '', 'Single', '', 1, '150000', '0', '8', '17', '10', '0', '1', '2', '3', '0', '0', '0', 'Test Address', '', '', '', 'profile_1546421723.png', 'profile_background_1519924152.jpg', '', '', '12345678900', '', '', '', '', '', '', '', '', 1, '22-02-2021 11:43:24', '22-02-2021 15:42:55', '127.0.0.1', 1, 1, 'fixed_layout_hrsale', '', '', '0,1,2', 0, 'O+', 113, 113, '2018-02-28 05:30:44'),
+(6, '816028', 1, 0, 'John', 'Doe', 'john', 'john@doe.com', '139753', 'N567S987S567F', 'N1234H8976I5678F', '$2y$12$ZoOcsRsnGP8XmTcCkFZ4puu0/G76B4nvdJEEMwaxIWck43k8ZKF9q', '2000-12-29', 'Male', 0, 2, 1, 0, 9, 1, 1, '', '', 0, 0, '2020-12-29', '', '', '', 1, '55000', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '00910', '', '', '', '', '', '', '', '0757589568', '', '', '', '', '', '', '', '', 1, '', '', '', 0, 0, '', '', '', '0', 0, NULL, 0, 0, '2020-12-29 07:15:01');
 
 -- --------------------------------------------------------
 

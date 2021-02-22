@@ -2923,6 +2923,10 @@ $lang['xin_type'] = 'Report Type';
 $lang['xin_choose_type'] = 'Select Report Type';
 $lang['xin_nssf'] = 'NSSF';
 $lang['xin_nhif'] = 'NHIF';
+$lang['xin_employee_nssf'] = 'NSSF Number*';
+$lang['xin_employee_nhif'] = 'NHIF Number*';
+
+
 
 ///////////////////////////////////////////////// end hrsale v2.0.1
 /* End of file hrsale_lang.php */

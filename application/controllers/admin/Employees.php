@@ -2218,6 +2218,10 @@ class Employees extends MY_Controller {
 			 $Return['error'] = $this->lang->line('xin_employee_error_password_not_match');
 		} else if($this->input->post('role')==='') {
 			 $Return['error'] = $this->lang->line('xin_employee_error_user_role');
+		}else if($this->input->post('nssf_no')===''){
+			$Return['error'] = $this->lang->line('xin_employee_nssf');
+		} else if($this->input->post('nhif_no')===''){
+			$Return['error'] = $this->lang->line('xin_employee_nhif');
 		} else if($this->input->post('pin_code')==='') {
 			 $Return['error'] = $this->lang->line('xin_pincode_field_error');
 		} else if(!filter_var($this->input->post('pin_code'), FILTER_VALIDATE_INT)) {
@@ -2270,6 +2274,8 @@ class Employees extends MY_Controller {
 		$password_hash = password_hash($this->input->post('password'), PASSWORD_BCRYPT, $options);
 		$leave_categories = array($this->input->post('leave_categories'));
 		$cat_ids = implode(',',$this->input->post('leave_categories'));
+		$nhif_no = $this->Xin_model->clean_post($this->input->post('nhif_no'));
+		$nssf_no = $this->Xin_model->clean_post($this->input->post('nssf_no'));
 
 		$data = array(
 		'employee_id' => $employee_id,
@@ -2294,7 +2300,9 @@ class Employees extends MY_Controller {
 		'address' => $address,
 		'is_active' => 1,
 		'leave_categories' => $cat_ids,
-		'created_at' => date('Y-m-d h:i:s')
+		'created_at' => date('Y-m-d h:i:s'),
+		'nssf_no' => $nssf_no,
+		'nhif_no' => $nhif_no
 		);
 		$iresult = $this->Employees_model->add($data);
 		if ($iresult) {

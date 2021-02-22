@@ -3731,6 +3731,13 @@ class Payroll extends MY_Controller {
 
 
 
+		if($type='NSSF')
+		{
+			$code = $user[0]->nssf_no;
+		}else{
+			$code = $user[0]->nhif_no;
+		}
+
 		$pdf->SetCreator($employee_name);
 		$pdf->SetAuthor($employee_name);
 		$pdf->setFooterData(array(0,64,0), array(0,64,128));
@@ -3741,6 +3748,8 @@ class Payroll extends MY_Controller {
 		$pdf->Ln(1);
 		$pdf->SetFont('helvetica', 'B', 12);
 		$pdf->Cell(180,5,$employee_name,0,1,'C');
+		$pdf->Ln(1);
+		$pdf->Cell(180,5,$type.' No: '.$code,0,1,'C');
 		$pdf->Ln(1);
 		$text = $type." Contribution Year ".$year;
 		$pdf->Cell(180,5, $text,0,1,'C');

@@ -3729,9 +3729,7 @@ class Payroll extends MY_Controller {
 		$employee_other_names =  ucwords($user[0]->first_name);
 		$employee_name = $employee_other_names.' '.$employee_main_name;
 
-
-
-		if($type='NSSF')
+		if($type=='NSSF')
 		{
 			$code = $user[0]->nssf_no;
 		}else{

@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.2
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 21, 2021 at 03:25 PM
--- Server version: 10.3.20-MariaDB-1
--- PHP Version: 7.3.12-1
+-- Generation Time: Apr 15, 2021 at 03:19 PM
+-- Server version: 10.3.23-MariaDB-1
+-- PHP Version: 7.4.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -55,6 +54,17 @@ CREATE TABLE `xin_advance_salaries` (
   `is_deducted_from_salary` int(11) DEFAULT NULL,
   `created_at` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `xin_allowances`
+--
+
+CREATE TABLE `xin_allowances` (
+  `id` int(11) NOT NULL,
+  `allowance_title` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -238,6 +248,13 @@ CREATE TABLE `xin_chat_messages` (
   `department_id` int(11) NOT NULL,
   `location_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `xin_chat_messages`
+--
+
+INSERT INTO `xin_chat_messages` (`message_id`, `from_id`, `to_id`, `message_frm`, `is_read`, `message_content`, `message_date`, `recd`, `message_type`, `department_id`, `location_id`) VALUES
+(1, '1', '7', '7', 0, 'hello', '2021-04-15 00:57:22', 0, '', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -926,6 +943,7 @@ CREATE TABLE `xin_employees` (
   `salary_director_fees` varchar(200) NOT NULL DEFAULT '0',
   `salary_bonus` varchar(200) NOT NULL DEFAULT '0',
   `salary_advance_paid` varchar(200) NOT NULL DEFAULT '0',
+  `employment_type` enum('Temporary','Contract','Permanent') NOT NULL DEFAULT 'Permanent',
   `address` mediumtext NOT NULL,
   `state` varchar(200) NOT NULL,
   `city` varchar(200) NOT NULL,
@@ -964,9 +982,9 @@ CREATE TABLE `xin_employees` (
 -- Dumping data for table `xin_employees`
 --
 
-INSERT INTO `xin_employees` (`user_id`, `employee_id`, `office_shift_id`, `reports_to`, `first_name`, `last_name`, `username`, `email`, `pincode`, `password`, `date_of_birth`, `gender`, `e_status`, `user_role_id`, `department_id`, `sub_department_id`, `designation_id`, `company_id`, `location_id`, `view_companies_id`, `salary_template`, `hourly_grade_id`, `monthly_grade_id`, `date_of_joining`, `date_of_leaving`, `marital_status`, `salary`, `wages_type`, `basic_salary`, `daily_wages`, `salary_ssempee`, `salary_ssempeer`, `salary_income_tax`, `salary_overtime`, `salary_commission`, `salary_claims`, `salary_paid_leave`, `salary_director_fees`, `salary_bonus`, `salary_advance_paid`, `address`, `state`, `city`, `zipcode`, `profile_picture`, `profile_background`, `resume`, `skype_id`, `contact_no`, `facebook_link`, `twitter_link`, `blogger_link`, `linkdedin_link`, `google_plus_link`, `instagram_link`, `pinterest_link`, `youtube_link`, `is_active`, `last_login_date`, `last_logout_date`, `last_login_ip`, `is_logged_in`, `online_status`, `fixed_header`, `compact_sidebar`, `boxed_wrapper`, `leave_categories`, `ethnicity_type`, `blood_group`, `nationality_id`, `citizenship_id`, `created_at`) VALUES
-(1, 'kevin', 1, 0, 'Kevin', 'Kihara', 'kevoh', 'kihashkevo@gmail.com', '0', '$2y$12$DOMLZ9/y/Gqb9wZpJbi8I.A49t.9PIv63JOtkZwE2rYdQX2joPKD.', '2018-03-28', 'Male', 0, 1, 2, 0, 10, 1, 1, '0', 'monthly', 0, 0, '2018-02-01', '', 'Single', '', 1, '150000', '0', '8', '17', '10', '0', '1', '2', '3', '0', '0', '0', 'Test Address', '', '', '', 'profile_1546421723.png', 'profile_background_1519924152.jpg', '', '', '12345678900', '', '', '', '', '', '', '', '', 1, '21-02-2021 10:41:21', '16-02-2021 07:23:06', '127.0.0.1', 1, 1, 'fixed_layout_hrsale', '', '', '0,1,2', 0, 'O+', 113, 113, '2018-02-28 05:30:44'),
-(6, '816028', 1, 0, 'John', 'Doe', 'john', 'john@doe.com', '139753', '$2y$12$ZoOcsRsnGP8XmTcCkFZ4puu0/G76B4nvdJEEMwaxIWck43k8ZKF9q', '2000-12-29', 'Male', 0, 2, 1, 0, 9, 1, 1, '', '', 0, 0, '2020-12-29', '', '', '', 1, '55000', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '00910', '', '', '', '', '', '', '', '0757589568', '', '', '', '', '', '', '', '', 1, '', '', '', 0, 0, '', '', '', '0', 0, NULL, 0, 0, '2020-12-29 07:15:01');
+INSERT INTO `xin_employees` (`user_id`, `employee_id`, `office_shift_id`, `reports_to`, `first_name`, `last_name`, `username`, `email`, `pincode`, `password`, `date_of_birth`, `gender`, `e_status`, `user_role_id`, `department_id`, `sub_department_id`, `designation_id`, `company_id`, `location_id`, `view_companies_id`, `salary_template`, `hourly_grade_id`, `monthly_grade_id`, `date_of_joining`, `date_of_leaving`, `marital_status`, `salary`, `wages_type`, `basic_salary`, `daily_wages`, `salary_ssempee`, `salary_ssempeer`, `salary_income_tax`, `salary_overtime`, `salary_commission`, `salary_claims`, `salary_paid_leave`, `salary_director_fees`, `salary_bonus`, `salary_advance_paid`, `employment_type`, `address`, `state`, `city`, `zipcode`, `profile_picture`, `profile_background`, `resume`, `skype_id`, `contact_no`, `facebook_link`, `twitter_link`, `blogger_link`, `linkdedin_link`, `google_plus_link`, `instagram_link`, `pinterest_link`, `youtube_link`, `is_active`, `last_login_date`, `last_logout_date`, `last_login_ip`, `is_logged_in`, `online_status`, `fixed_header`, `compact_sidebar`, `boxed_wrapper`, `leave_categories`, `ethnicity_type`, `blood_group`, `nationality_id`, `citizenship_id`, `created_at`) VALUES
+(1, 'kevin', 1, 0, 'Kevin', 'Kihara', 'kevoh', 'kihashkevo@gmail.com', '0', '$2y$12$DOMLZ9/y/Gqb9wZpJbi8I.A49t.9PIv63JOtkZwE2rYdQX2joPKD.', '2018-03-28', 'Male', 0, 1, 2, 0, 10, 1, 1, '0', 'monthly', 0, 0, '2018-02-01', '', 'Single', '', 1, '150000', '0', '8', '17', '10', '0', '1', '2', '3', '0', '0', '0', 'Permanent', 'Test Address', '', '', '', 'profile_1546421723.png', 'profile_background_1519924152.jpg', '', '', '12345678900', '', '', '', '', '', '', '', '', 1, '15-04-2021 08:25:35', '14-04-2021 16:57:15', '127.0.0.1', 1, 1, 'fixed_layout_hrsale', '', '', '0,1,2', 0, 'O+', 113, 113, '2018-02-28 05:30:44'),
+(6, '816028', 1, 0, 'John', 'Doe', 'john', 'john@doe.com', '139753', '$2y$12$ZoOcsRsnGP8XmTcCkFZ4puu0/G76B4nvdJEEMwaxIWck43k8ZKF9q', '2000-12-29', 'Male', 0, 2, 1, 0, 9, 1, 1, '', '', 0, 0, '2020-12-29', '', '', '', 1, '55000', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'Permanent', '00910', '', '', '', '', '', '', '', '0757589568', '', '', '', '', '', '', '', '', 1, '', '', '', 0, 0, '', '', '', '0', 0, NULL, 0, 0, '2020-12-29 07:15:01');
 
 -- --------------------------------------------------------
 
@@ -1475,7 +1493,7 @@ CREATE TABLE `xin_finance_bankcash` (
 --
 
 INSERT INTO `xin_finance_bankcash` (`bankcash_id`, `account_name`, `account_balance`, `account_opening_balance`, `account_number`, `branch_code`, `bank_branch`, `created_at`) VALUES
-(1, 'AlRajhi Bank', '9648500', '10000000', '123456789', '00966', 'Riyadh Branch', '23-06-2020 01:23:16');
+(1, 'AlRajhi Bank', '9598750', '10000000', '123456789', '00966', 'Riyadh Branch', '23-06-2020 01:23:16');
 
 -- --------------------------------------------------------
 
@@ -1594,7 +1612,8 @@ INSERT INTO `xin_finance_transaction` (`transaction_id`, `account_id`, `company_
 (19, 1, 0, '2021-02-16', 'Payroll Payments', 21250, 'expense', 'cr', 0, 6, NULL, 3, 'Payroll Payments', 19, 6, NULL, NULL, '2021-02-16 12:17:09'),
 (20, 1, 0, '2021-02-16', 'Payroll Payments', 49750, 'expense', 'cr', 0, 6, NULL, 3, 'Payroll Payments', 20, 6, NULL, NULL, '2021-02-16 12:18:06'),
 (21, 1, 0, '2021-02-16', 'Payroll Payments', 49750, 'expense', 'cr', 0, 6, NULL, 3, 'Payroll Payments', 21, 6, NULL, NULL, '2021-02-16 13:32:15'),
-(22, 1, 0, '2021-02-16', 'Payroll Payments', 49750, 'expense', 'cr', 0, 6, NULL, 3, 'Payroll Payments', 22, 6, NULL, NULL, '2021-02-16 13:33:10');
+(22, 1, 0, '2021-02-16', 'Payroll Payments', 49750, 'expense', 'cr', 0, 6, NULL, 3, 'Payroll Payments', 22, 6, NULL, NULL, '2021-02-16 13:33:10'),
+(23, 1, 0, '2021-04-15', 'Payroll Payments', 49750, 'expense', 'cr', 0, 6, NULL, 3, 'Payroll Payments', 23, 6, NULL, NULL, '2021-04-15 15:02:32');
 
 -- --------------------------------------------------------
 
@@ -3069,7 +3088,8 @@ CREATE TABLE `xin_salary_payslips` (
 
 INSERT INTO `xin_salary_payslips` (`payslip_id`, `payslip_key`, `employee_id`, `department_id`, `company_id`, `location_id`, `designation_id`, `salary_month`, `wages_type`, `payslip_type`, `basic_salary`, `daily_wages`, `is_half_monthly_payroll`, `hours_worked`, `total_allowances`, `total_commissions`, `total_statutory_deductions`, `total_other_payments`, `total_loan`, `total_overtime`, `saudi_gosi_percent`, `saudi_gosi_amount`, `statutory_deductions`, `is_advance_salary_deduct`, `advance_salary_amount`, `net_salary`, `grand_net_salary`, `other_payment`, `payment_method`, `pay_comments`, `is_payment`, `year_to_date`, `status`, `created_at`) VALUES
 (21, 'bAeUiGh2ZxuJpMTzFCjaP5cnOtvXdI87gYwWDqmS', 6, 1, 1, 1, 9, '2020-01', 1, 'full_monthly', '55000', '', 0, '0', '5500', '0', '3250', '0', '7500', '0', '0', '0', '', 0, '0', '49750', '', '', 0, '', 1, '2021-02-16', 2, '2021-02-16 01:32:15'),
-(22, '2lBgd4NkUAOSHCV90bXtfpKjIEqQGMiTsLw1v8mP', 6, 1, 1, 1, 9, '2020-02', 1, 'full_monthly', '55000', '', 0, '0', '5500', '0', '3250', '0', '7500', '0', '0', '0', '', 0, '0', '49750', '', '', 0, '', 1, '2021-02-16', 0, '2021-02-16 01:33:10');
+(22, '2lBgd4NkUAOSHCV90bXtfpKjIEqQGMiTsLw1v8mP', 6, 1, 1, 1, 9, '2020-02', 1, 'full_monthly', '55000', '', 0, '0', '5500', '0', '3250', '0', '7500', '0', '0', '0', '', 0, '0', '49750', '', '', 0, '', 1, '2021-02-16', 0, '2021-02-16 01:33:10'),
+(23, '3FzdGnxKp7eJ18BDwMRXitCAkQabUT0sh2IrLoNv', 6, 1, 1, 1, 9, '2021-04', 1, 'full_monthly', '55000', '', 0, '0', '5500', '0', '3250', '0', '7500', '0', '0', '0', '', 0, '0', '49750', '', '', 0, '', 1, '2021-04-15', 0, '2021-04-15 03:02:32');
 
 -- --------------------------------------------------------
 
@@ -3129,7 +3149,10 @@ INSERT INTO `xin_salary_payslip_allowances` (`payslip_allowances_id`, `payslip_i
 (63, 21, 6, 0, 0, 'Airtime', '1000', '2020-01', '16-02-2021 01:32:15'),
 (64, 22, 6, 0, 0, 'House', '2500', '2020-02', '16-02-2021 01:33:10'),
 (65, 22, 6, 0, 0, 'Transport', '2000', '2020-02', '16-02-2021 01:33:10'),
-(66, 22, 6, 0, 0, 'Airtime', '1000', '2020-02', '16-02-2021 01:33:10');
+(66, 22, 6, 0, 0, 'Airtime', '1000', '2020-02', '16-02-2021 01:33:10'),
+(67, 23, 6, 0, 0, 'House', '2500', '2021-04', '15-04-2021 03:02:32'),
+(68, 23, 6, 0, 0, 'Transport', '2000', '2021-04', '15-04-2021 03:02:32'),
+(69, 23, 6, 0, 0, 'Airtime', '1000', '2021-04', '15-04-2021 03:02:32');
 
 -- --------------------------------------------------------
 
@@ -3187,7 +3210,8 @@ INSERT INTO `xin_salary_payslip_loan` (`payslip_loan_id`, `payslip_id`, `employe
 (19, 19, 6, 'Monthly', '7500', '2020-04', '16-02-2021 12:17:09'),
 (20, 20, 6, 'Monthly', '7500', '2020-08', '16-02-2021 12:18:07'),
 (21, 21, 6, 'Monthly', '7500', '2020-01', '16-02-2021 01:32:15'),
-(22, 22, 6, 'Monthly', '7500', '2020-02', '16-02-2021 01:33:11');
+(22, 22, 6, 'Monthly', '7500', '2020-02', '16-02-2021 01:33:11'),
+(23, 23, 6, 'Monthly', '7500', '2021-04', '15-04-2021 03:02:33');
 
 -- --------------------------------------------------------
 
@@ -3282,7 +3306,9 @@ INSERT INTO `xin_salary_payslip_statutory_deductions` (`payslip_deduction_id`, `
 (41, 21, 6, 0, 'NHIF', '500', '2020-01', '16-02-2021 01:32:15'),
 (42, 21, 6, 1, 'NSSF', '5', '2020-01', '16-02-2021 01:32:15'),
 (43, 22, 6, 0, 'NHIF', '500', '2020-02', '16-02-2021 01:33:10'),
-(44, 22, 6, 1, 'NSSF', '5', '2020-02', '16-02-2021 01:33:10');
+(44, 22, 6, 1, 'NSSF', '5', '2020-02', '16-02-2021 01:33:10'),
+(45, 23, 6, 0, 'NHIF', '500', '2021-04', '15-04-2021 03:02:32'),
+(46, 23, 6, 1, 'NSSF', '5', '2021-04', '15-04-2021 03:02:33');
 
 -- --------------------------------------------------------
 
@@ -3932,6 +3958,12 @@ ALTER TABLE `ci_sessions`
 --
 ALTER TABLE `xin_advance_salaries`
   ADD PRIMARY KEY (`advance_salary_id`);
+
+--
+-- Indexes for table `xin_allowances`
+--
+ALTER TABLE `xin_allowances`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `xin_announcements`
@@ -4840,6 +4872,12 @@ ALTER TABLE `xin_advance_salaries`
   MODIFY `advance_salary_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `xin_allowances`
+--
+ALTER TABLE `xin_allowances`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `xin_announcements`
 --
 ALTER TABLE `xin_announcements`
@@ -4885,7 +4923,7 @@ ALTER TABLE `xin_award_type`
 -- AUTO_INCREMENT for table `xin_chat_messages`
 --
 ALTER TABLE `xin_chat_messages`
-  MODIFY `message_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `message_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `xin_clients`
@@ -4987,7 +5025,7 @@ ALTER TABLE `xin_email_template`
 -- AUTO_INCREMENT for table `xin_employees`
 --
 ALTER TABLE `xin_employees`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `xin_employee_bankaccount`
@@ -5179,7 +5217,7 @@ ALTER TABLE `xin_finance_payers`
 -- AUTO_INCREMENT for table `xin_finance_transaction`
 --
 ALTER TABLE `xin_finance_transaction`
-  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `transaction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `xin_finance_transactions`
@@ -5551,13 +5589,13 @@ ALTER TABLE `xin_salary_overtime`
 -- AUTO_INCREMENT for table `xin_salary_payslips`
 --
 ALTER TABLE `xin_salary_payslips`
-  MODIFY `payslip_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `payslip_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `xin_salary_payslip_allowances`
 --
 ALTER TABLE `xin_salary_payslip_allowances`
-  MODIFY `payslip_allowances_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `payslip_allowances_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 
 --
 -- AUTO_INCREMENT for table `xin_salary_payslip_commissions`
@@ -5569,7 +5607,7 @@ ALTER TABLE `xin_salary_payslip_commissions`
 -- AUTO_INCREMENT for table `xin_salary_payslip_loan`
 --
 ALTER TABLE `xin_salary_payslip_loan`
-  MODIFY `payslip_loan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `payslip_loan_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `xin_salary_payslip_other_payments`
@@ -5587,7 +5625,7 @@ ALTER TABLE `xin_salary_payslip_overtime`
 -- AUTO_INCREMENT for table `xin_salary_payslip_statutory_deductions`
 --
 ALTER TABLE `xin_salary_payslip_statutory_deductions`
-  MODIFY `payslip_deduction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `payslip_deduction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `xin_salary_statutory_deductions`

@@ -8,6 +8,7 @@
 <?php
 $eid = $this->uri->segment(4);
 $eresult = $this->Employees_model->read_employee_information($eid);
+
 ?>
 <?php
 $ar_sc = explode('- ',$system[0]->default_currency_symbol);
@@ -89,6 +90,7 @@ $leave_user = $this->Xin_model->read_user_info($eid);
                       <?php echo form_open_multipart('admin/employees/basic_info', $attributes, $hidden);?>
                       <div class="bg-white">
                         <div class="row">
+                        
                           <div class="col-md-6">
                             <div class="form-group">
                               <label for="first_name"><?php echo $this->lang->line('xin_employee_first_name');?><i class="hrsale-asterisk">*</i></label>
@@ -107,6 +109,7 @@ $leave_user = $this->Xin_model->read_user_info($eid);
                             <div class="form-group">
                               <label for="employee_id"><?php echo $this->lang->line('dashboard_employee_id');?><i class="hrsale-asterisk">*</i></label>
                               <input class="form-control" placeholder="<?php echo $this->lang->line('dashboard_employee_id');?>" name="employee_id" type="text" value="<?php echo $employee_id;?>">
+      
                             </div>
                           </div>
                           <div class="col-md-4">
@@ -307,7 +310,18 @@ $leave_user = $this->Xin_model->read_user_info($eid);
                               <input class="form-control date" readonly placeholder="<?php echo $this->lang->line('xin_employee_dob');?>" name="date_of_birth" type="text" value="<?php echo $date_of_birth;?>">
                             </div>
                           </div>
-                          <div class="col-md-8">
+
+                          <div class="col-md-4">
+                          <div class="form-group">
+                            <label for="employment_type" class="control-label"><?php echo $this->lang->line('xin_employment_type');?></label>
+                            <select class="form-control" name="employment_type" data-plugin="select_hrm" data-placeholder="<?php echo $this->lang->line('xin_employment_type');?>">
+                              <option value="Temporary" <?php if($eresult[0]->employment_type=='Temporary'):?> selected <?php endif; ?>><?php echo $this->lang->line('xin_employment_temporary');?></option>
+                              <option value="Contract" <?php if($eresult[0]->employment_type=='Contract'):?> selected <?php endif; ?>><?php echo $this->lang->line('xin_employment_contract');?></option>
+                              <option value="Permanent" <?php if($eresult[0]->employment_type=='Permanent'):?> selected <?php endif; ?>><?php echo $this->lang->line('xin_employment_permanent');?></option>
+                            </select>
+                          </div>
+                          </div>
+                          <div class="col-md-4">
                             <div class="form-group">
                               <label for="xin_hr_leave_cat"><?php echo $this->lang->line('xin_hr_leave_cat');?></label>
                               <input type="hidden" name="leave_categories[]" value="0" />
@@ -1461,7 +1475,9 @@ $leave_user = $this->Xin_model->read_user_info($eid);
                           </div>
                         </div>
                       </div>
-                      <?php echo form_close(); ?> </div>
+                      <?php echo form_close(); ?>
+                                           
+                       </div>
                   </div>
                   <div class="tab-pane fade" id="account-allowances">
                     <div class="box">
@@ -1518,7 +1534,14 @@ $leave_user = $this->Xin_model->read_user_info($eid);
                         <div class="col-md-3">
                           <div class="form-group">
                             <label for="account_title"><?php echo $this->lang->line('dashboard_xin_title');?><i class="hrsale-asterisk">*</i></label>
-                            <input class="form-control" placeholder="<?php echo $this->lang->line('dashboard_xin_title');?>" name="allowance_title" type="text" value="" id="allowance_title">
+                            <select name="allowance_title" class="form-control" data-plugin="select_hrm" id="allowance_title">
+                              <option value="House">House</option>
+                              <option value="Medical">Medical</option>
+                              <option value="Transport">Transport</option>
+                              <option value="Airtime">Airtime</option>
+                              <option value="Hardship">Hardship</option>
+                            </select>
+
                           </div>
                         </div>
                         <div class="col-md-3">
@@ -1535,7 +1558,8 @@ $leave_user = $this->Xin_model->read_user_info($eid);
                           </div>
                         </div>
                       </div>
-                      <?php echo form_close(); ?> </div>
+                      <?php echo form_close(); ?>
+                     </div>
                   </div>
                   <div class="tab-pane fade" id="account-commissions">
                     <div class="box">

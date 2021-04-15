@@ -53,6 +53,14 @@ class Employees_model extends CI_Model {
 		$query = $this->db->query($sql, $binds);
 	    return $query;
 	}
+	// get all employes>employee_type >
+	public function get_employment_type($emp_type) {
+		
+		$sql = 'SELECT * FROM xin_employees WHERE employment_type = ?';
+		$binds = array($emp_type);
+		$query = $this->db->query($sql, $binds);
+	    return $query;
+	}
 	// get all employes>company|location >
 	public function get_company_location_employees_flt($cid,$lid) {
 		
@@ -74,6 +82,15 @@ class Employees_model extends CI_Model {
 		
 		$sql = 'SELECT * FROM xin_employees WHERE company_id = ? and location_id = ? and department_id = ? and designation_id = ?';
 		$binds = array($cid,$lid,$dep_id,$des_id);
+		$query = $this->db->query($sql, $binds);
+	    return $query;
+	}
+
+	// get all employes>company|location|department|designation|employment type>
+	public function get_company_location_department_designation_employment_type_employees_flt($cid,$lid,$dep_id,$des_id, $emp_type) {
+		
+		$sql = 'SELECT * FROM xin_employees WHERE company_id = ? and location_id = ? and department_id = ? and designation_id = ? and employment_type = ?';
+		$binds = array($cid,$lid,$dep_id,$des_id,$emp_type);
 		$query = $this->db->query($sql, $binds);
 	    return $query;
 	}
@@ -1613,6 +1630,17 @@ class Employees_model extends CI_Model {
 	// Function to add record in table > allowance
 	public function add_salary_allowances($data){
 		$this->db->insert('xin_salary_allowances', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	//ad a specific allowance
+	public function add_allowance($data)
+	{
+		$this->db->insert('xin_allowances', $data);
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		} else {

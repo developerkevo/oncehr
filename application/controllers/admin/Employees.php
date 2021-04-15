@@ -248,6 +248,10 @@ class Employees extends MY_Controller {
 				
 			} else if($this->input->get("company_id")!=0 && $this->input->get("location_id")!=0 && $this->input->get("department_id")!=0 && $this->input->get("designation_id")!=0){
 				$employee = $this->Employees_model->get_company_location_department_designation_employees_flt($this->input->get("company_id"),$this->input->get("location_id"),$this->input->get("department_id"),$this->input->get("designation_id"));
+			}else if($this->input->get("company_id")!=0 && $this->input->get("location_id")!=0 && $this->input->get("department_id")!=0 && $this->input->get("designation_id")!=0 && ($this->input->get('employment_type') != "" or $this->input->get('employment_type') != null)){
+				$employee = $this->Employees_model->get_company_location_department_designation_employment_type_employees_flt($this->input->get("company_id"),$this->input->get("location_id"),$this->input->get("department_id"),$this->input->get("designation_id"), $this->input->get("employment_type"));
+			}else if($this->input->get("employment_type") == "" or $this->input->get("employment_type")== null){
+				$employee = $this->Employees_model->get_employment_type($this->input->get("employment_type"));
 			}
 		} else {
 			if($user_info[0]->user_role_id==1) {
@@ -421,8 +425,9 @@ class Employees extends MY_Controller {
 				$employee_name,
 				$comp_name,
 				$contact_info,
+				$r->employment_type,
 				$manager_name,
-				$role_status,
+				$role_status
 			);
       
 	  }
@@ -2265,7 +2270,8 @@ class Employees extends MY_Controller {
 		$date_of_birth = $this->Xin_model->clean_date_post($this->input->post('date_of_birth'));
 		$contact_no = $this->Xin_model->clean_post($this->input->post('contact_no'));
 		$address = $this->Xin_model->clean_post($this->input->post('address'));
-		
+		$employment_type = $this->Xin_model->clean_post($this->input->post('employment_type'));
+			
 		$options = array('cost' => 12);
 		$password_hash = password_hash($this->input->post('password'), PASSWORD_BCRYPT, $options);
 		$leave_categories = array($this->input->post('leave_categories'));
@@ -2291,6 +2297,7 @@ class Employees extends MY_Controller {
 		'designation_id' => $this->input->post('designation_id'),
 		'date_of_joining' => $date_of_joining,
 		'contact_no' => $contact_no,
+		'employment_type' => $employment_type,
 		'address' => $address,
 		'is_active' => 1,
 		'leave_categories' => $cat_ids,
@@ -2495,6 +2502,7 @@ class Employees extends MY_Controller {
 		$leave_categories = array($this->input->post('leave_categories'));
 		$cat_ids = implode(',',$this->input->post('leave_categories'));
 		$view_companies_id = implode(',',$this->input->post('view_companies_id'));
+		$employment_type = $this->Xin_model->clean_post($this->input->post('employment_type'));
 		
 		$module_attributes = $this->Custom_fields_model->all_hrsale_module_attributes();
 		$count_module_attributes = $this->Custom_fields_model->count_module_attributes();	
@@ -2531,6 +2539,7 @@ class Employees extends MY_Controller {
 		'designation_id' => $this->input->post('designation_id'),
 		'date_of_joining' => $date_of_joining,
 		'contact_no' => $contact_no,
+		'employment_type' => $employment_type,
 		'address' => $address,
 		'state' => $this->input->post('estate'),
 		'city' => $this->input->post('ecity'),
@@ -5296,6 +5305,36 @@ class Employees extends MY_Controller {
 		$this->output($Return);
 		exit;
 		}
+	}
+
+	//add allowance
+
+	public function save_allowances()
+	{
+		
+		if($this->input->post('type')=='employee_allowance') {		
+			/* Define return | here result is used to return user data and error for error message */
+			$Return = array('result'=>'', 'error'=>'', 'csrf_hash'=>'');
+			$Return['csrf_hash'] = $this->security->get_csrf_hash();	
+			if($this->input->post('allowance_title')==='') {
+				$Return['error'] = $this->lang->line('xin_employee_set_allowance_title_error');
+			}
+			
+			if($Return['error']!=''){
+				$this->output($Return);
+			}
+			$data = array(
+			'allowance_title' => $this->input->post('allowance_title'),
+			);
+			$result = $this->Employees_model->add_allowance($data);
+			if ($result == TRUE) {
+				$Return['result'] = $this->lang->line('xin_employee_set_allowance_success');
+			} else {
+				$Return['error'] = $this->lang->line('xin_error_msg');
+			}
+			$this->output($Return);
+			exit;
+			}
 	}
 	// Validate and update info in database // basic info
 	public function employee_commissions_option() {

@@ -2923,6 +2923,14 @@ $lang['xin_type'] = 'Report Type';
 $lang['xin_choose_type'] = 'Select Report Type';
 $lang['xin_nssf'] = 'NSSF';
 $lang['xin_nhif'] = 'NHIF';
+$lang['xin_paye'] = 'PAYE';
+$lang['xin_relief'] = 'Tax Relief';
+$lang['xin_sal_range'] = 'Salary Range';
+$lang['xin_employment_type'] = 'Employment Type';
+$lang['xin_employment_temporary'] = 'Temporary';
+$lang['xin_employment_contract'] = 'Contract';
+$lang['xin_employment_permanent'] = 'Permanent';
+$lang['xin_deduction_matrix'] = 'NHIF, NSSF & PAYE Deduction matrix for year : ';
 
 ///////////////////////////////////////////////// end hrsale v2.0.1
 /* End of file hrsale_lang.php */

@@ -332,7 +332,7 @@ if ($system[0]->is_half_monthly == 1) {
             <td>_</td>
             <td>_</td>
           </tr>
-          
+
           <tr>
             <td>80,000 - 89,999</td>
             <td>_</td>

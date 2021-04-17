@@ -781,5 +781,42 @@
 			return false;
 		}		
 	}
+
+
+	public function get_deduction_matrices()
+	{
+		$sql = 'SELECT * FROM xin_deduction_matrix ORDER BY type ASC';
+		return $this->db->query($sql)->result();
+	}
+
+	public function add_deduction_matrix($data){
+		$this->db->insert('xin_deduction_matrix', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
+	public function update_deduction_matrix($data, $id){
+		$this->db->where('id', $id);
+		if( $this->db->update('xin_deduction_matrix',$data)) {
+			return true;
+		} else {
+			return false;
+		}		
+	}
+
+	public function delete_deduction_matrix($id)
+	{
+		$this->db->where('id', $id);
+		if($this->db->delete('xin_deduction_matrix'))
+		{
+			return true;
+		}
+	}
+
+
 }
 ?>

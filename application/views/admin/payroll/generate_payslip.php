@@ -7,6 +7,7 @@
 <?php $role_resources_ids = $this->Xin_model->user_role_resource(); ?>
 <?php $get_animate = $this->Xin_model->get_content_animate(); ?>
 <?php $system = $this->Xin_model->read_setting_info(1); ?>
+<?php $deduction_matrices = $this->Payroll_model->get_deduction_matrices(); ?>
 <?php
 $is_half_col = '5';
 if ($system[0]->is_half_monthly == 1) {
@@ -182,186 +183,99 @@ if ($system[0]->is_half_monthly == 1) {
   </div>
 </div>
 
+
+
+<!-- deduction matrix -->
+<div id="deduction_matrix_form" class="collapse add-form <?php echo $get_animate; ?>" data-parent="#accordion2" style="">
+  <div class="ui-bordered px-4 pt-4 mb-4">
+    <?php $attributes = array('name' => 'deduction_matrix', 'id' => 'deduction_matrix', 'class' => 'm-b-1 add form-hrm', "method" => "post"); ?>
+    <?php $hidden = array('user_id' => $session['user_id']); ?>
+    <?php echo form_open("admin/payroll/add_deduction_matrix", $attributes, $hidden); ?>
+    <div class="form-row">
+      <div class="col-md mb-4" id="department_ajax">
+        <label class="form-label"><?php echo "Charge Type"; ?></label>
+        <select class="form-control" id="type" name="type" data-plugin="select_hrm">
+          <option value="NSSF"><?php echo $this->lang->line('xin_nssf'); ?></option>
+          <option value="NHIF"><?php echo $this->lang->line('xin_nhif'); ?></option>
+          <option value="PAYE"><?php echo $this->lang->line('xin_paye'); ?></option>
+        </select>
+      </div>
+
+
+      <div class="col-md mb-4">
+        <label class="form-label"><?php echo "Pay Range" ?></label>
+        <input class="form-control" id="pay_range" name="pay_range" type="text" placeholder="0 - 24,000" required>
+      </div>
+      
+        <input class="form-control" id="id" name="id" type="hidden" required>
+      
+      <div class="col-md mb-4">
+        <label class="form-label"><?php echo "Charge" ?></label>
+        <input class="form-control" id="charge" name="charge" type="text" placeholder="10%" required>
+      </div>
+
+      <div class="col-md mb-4">
+        <label class="form-label"><?php echo "Relief" ?></label>
+        <input class="form-control" id="relief" name="relief" type="text" placeholder="1,000">
+      </div>
+      <div class="col-md col-xl-2 mb-4">
+        <label class="form-label d-none d-md-block">&nbsp;</label>
+        <button type="submit" class="btn btn-secondary btn-block"><span id="btnAddText"><?php echo "Add Deduction Matrix"; ?></span> </button>
+      </div>
+    </div>
+    <?php echo form_close(); ?>
+  </div>
+</div>
+
+
+
+
 <div class="card <?php echo $get_animate; ?> mt-5">
   <div class="box-header with-border">
-    <div id="accordion">
-      <div class="card-header with-elements"> <span class="card-header-title mr-2"><strong><?php echo $this->lang->line('xin_deduction_matrix'); ?></strong> <span id="payroll_date"><?php echo date('Y'); ?></span></span>
+    <div id="accordion2">
+      <div class="card-header with-elements">
+        <div class="card-header-elements ml-md-auto"> <a class="text-dark collapsed" data-toggle="collapse" href="#deduction_matrix_form" aria-expanded="false">
+            <button type="button" class="btn btn-xs btn-primary" id="btn2AddText"> <span class="ion ion-md-add"></span> <span><?php echo "Add Deduction Matrix" ?></span></button>
+          </a> </div>
       </div>
     </div>
   </div>
   <div class="card-body">
     <div class="box-datatable table-responsive">
-      <table class="datatables-demo table table-striped table-bordered" id="xin_table">
+      <table class="datatables-demo table table-striped table-bordered" id="xin_table2">
         <thead>
           <tr>
+            <th>Index</th>
             <th><?php echo $this->lang->line('xin_sal_range'); ?></th>
             <th><?php echo $this->lang->line('xin_nssf'); ?></th>
             <th><?php echo $this->lang->line('xin_nhif'); ?></th>
             <th><?php echo $this->lang->line('xin_paye'); ?></th>
             <th><?php echo $this->lang->line('xin_relief'); ?></th>
+            <th><?php echo 'Action' ?></th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>0 -24,000</td>
-            <td>_</td>
-            <td>_</td>
-            <td>10%</td>
-            <td>2,400</td>
-          </tr>
-          <tr>
-            <td>24,000 -32,333</td>
-            <td>_</td>
-            <td>_</td>
-            <td>25%</td>
-            <td>2400</td>
-          </tr>
-          <tr>
-            <td>Over 32,333</td>
-            <td>_</td>
-            <td>_</td>
-            <td>30%</td>
-            <td>2400</td>
-          </tr>
 
-          <tr>
-            <td>Any Amount</td>
-            <td>6%</td>
-            <td>_</td>
-            <td>_</td>
-            <td>2400</td>
-          </tr>
-          </tb>
-          <tr>
-            <td>0 - 5,999</td>
-            <td>_</td>
-            <td>150</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>6,000- 7,999</td>
-            <td>_</td>
-            <td>300</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
+          <?php
+          foreach ($deduction_matrices as $key => $dm) { ?>
+            <tr>
+              <td><?php echo ++$key ?></td>
+              <td><?php echo $dm->pay_range ?></td>
+              <td><?php echo $dm->type === 'NSSF' ? $dm->charge : "---" ?></td>
+              <td><?php echo $dm->type === 'NHIF' ? $dm->charge : "---" ?></td>
+              <td><?php echo $dm->type === 'PAYE' ? $dm->charge : "---" ?></td>
+              <td><?php echo $dm->relief ?></td>
+              <td>
+                <?php echo form_open("admin/payroll/delete_deduction_matrix/" . $dm->id, $attributes, $hidden); ?>
+                <button type="submit" class=" btn btn-sm btn-danger"> <i class="fa fa-trash"></i></button>
+                <button type="button" class=" btn btn-sm btn-info" onclick='editMatrix(<?php echo json_encode($dm) ?>)'> <i class="fa fa-edit"></i></button>
+                <?php ?>
 
-          <tr>
-            <td>8,000 - 11,999</td>
-            <td>_</td>
-            <td>400</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>12,000 - 14,999</td>
-            <td>_</td>
-            <td>500</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>15,000 - 19,999</td>
-            <td>_</td>
-            <td>600</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>20,000 - 24,999</td>
-            <td>_</td>
-            <td>750</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>25,000 - 29,999</td>
-            <td>_</td>
-            <td>850</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>30,000 - 34,999</td>
-            <td>_</td>
-            <td>900</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>35,000 - 39,999</td>
-            <td>_</td>
-            <td>950</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>40,000 - 44,999</td>
-            <td>_</td>
-            <td>1,000</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>45,000 - 49,999</td>
-            <td>_</td>
-            <td>1,100</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>50,000- 59,999</td>
-            <td>_</td>
-            <td>1,200</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>60,000 - 69,999</td>
-            <td>_</td>
-            <td>1,300</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-
-          <tr>
-            <td>70,000 - 79,999</td>
-            <td>_</td>
-            <td>1400</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-
-          <tr>
-            <td>80,000 - 89,999</td>
-            <td>_</td>
-            <td>1,500</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>90,000 - 99,999</td>
-            <td>_</td>
-            <td>1,600</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>100,000 and Above</td>
-            <td>_</td>
-            <td>1,700</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          <tr>
-            <td>Special Case (Private)</td>
-            <td>_</td>
-            <td>500</td>
-            <td>_</td>
-            <td>_</td>
-          </tr>
-          </tb>
+              </td>
+            </tr>
+          <?php
+          }
+          ?>
         </tbody>
       </table>
     </div>
@@ -376,3 +290,30 @@ if ($system[0]->is_half_monthly == 1) {
     display: none !important;
   }
 </style>
+
+<script>
+$(document).ready( function () {
+    $('#xin_table2').DataTable();
+} );
+  function editMatrix(data) {
+    
+    $("#deduction_matrix_form").removeClass("collapse");
+    $("#deduction_matrix_form").addClass("collapse show");
+    $("#btnAddText").text('Edit Deduction Matrix');
+    $("#btnAddText").text('Edit Deduction Matrix');
+    $("#btn2AddText").addClass('d-none');
+
+
+
+    let html = `<option value="NSSF" ${data.type == 'NSSF' ? 'selected' : ''} ><?php echo $this->lang->line('xin_nssf'); ?></option>
+          <option value="NHIF" ${data.type == 'NHIF' ? 'selected' : ''}><?php echo $this->lang->line('xin_nhif'); ?></option>
+          <option value="PAYE" ${data.type == 'PAYE' ? 'selected' : ''} ><?php echo $this->lang->line('xin_paye'); ?></option>`;
+    $("#pay_range").val(data.pay_range)
+    $("#charge").val(data.charge)
+    $("#type").empty()
+    $('#type').append(html)
+    $("#relief").val(data.relief)
+    $("#id").val(data.id)
+
+  }
+</script>

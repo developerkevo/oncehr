@@ -145,8 +145,16 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
                         </div>
                         <div class="col-md-3">
                           <div class="form-group">
-                            <label for="account_title"><?php echo $this->lang->line('dashboard_xin_title');?><i class="hrsale-asterisk">*</i></label>
-                            <input class="form-control" placeholder="<?php echo $this->lang->line('dashboard_xin_title');?>" name="allowance_title" type="text" value="" id="allowance_title">
+                          <label for="account_title"><?php echo $this->lang->line('dashboard_xin_title');?><i class="hrsale-asterisk">*</i></label>
+                            <select name="allowance_title" class="form-control" data-plugin="select_hrm" id="allowance_title">
+                              <option value="House">House</option>
+                              <option value="Medical">Medical</option>
+                              <option value="Transport">Transport</option>
+                              <option value="Airtime">Airtime</option>
+                              <option value="Hardship">Hardship </option>
+                            </select>
+
+
                           </div>
                         </div>
                         <div class="col-md-3">

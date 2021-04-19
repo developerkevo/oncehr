@@ -1539,7 +1539,8 @@ $leave_user = $this->Xin_model->read_user_info($eid);
                               <option value="Medical">Medical</option>
                               <option value="Transport">Transport</option>
                               <option value="Airtime">Airtime</option>
-                              <option value="Hardship">Hardship</option>
+                              <option value="Hardship">Hardship </option>
+                              <option value="Hardship">Bonus</option>
                             </select>
 
                           </div>

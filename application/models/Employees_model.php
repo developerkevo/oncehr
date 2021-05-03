@@ -1795,5 +1795,14 @@ class Employees_model extends CI_Model {
 			return null;
 		}
 	}
+
+
+	public function get_basic_salary($employee_id) {
+	
+		$sql = 'SELECT basic_salary FROM xin_employees WHERE user_id = ?';
+		$binds = array($employee_id);
+		$query = $this->db->query($sql, $binds);
+		return $query->result()[0];
+	}
 }
 ?>

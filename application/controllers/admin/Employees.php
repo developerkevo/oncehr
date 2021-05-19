@@ -51,6 +51,7 @@ class Employees extends MY_Controller
 		$this->load->model('Exin_model');
 		$this->load->library('Pdf');
 		$this->load->helper('string');
+		$this->load->library('excel');
 	}
 
 	/*Function to set JSON output*/
@@ -2192,6 +2193,66 @@ class Employees extends MY_Controller
 		}
 	}
 
+	public function add_employee_bulk()
+	{
+
+		$path = $_FILES["list_of_employees"]["tmp_name"];
+		$object = PHPExcel_IOFactory::load($path);
+		$all_data = [];
+		foreach($object->getWorksheetIterator() as $w)
+		{
+			$hisgestRow = $w->getHighestRow();
+			$hisgestColumn = $w->getHighestColumn();
+
+			for($row =2 ; $row<$hisgestRow; $row++)
+			{
+
+				
+			$data = array(
+				'first_name' => $w->getCellByColumnAndRow(0,$row)->getValue(),
+				'last_name' => $w->getCellByColumnAndRow(1,$row)->getValue(),
+				'employee_id' => $w->getCellByColumnAndRow(2,$row)->getValue(),
+				'date_of_joining' => $w->getCellByColumnAndRow(3,$row)->getValue(),
+				'company_id' =>$w->getCellByColumnAndRow(4,$row)->getValue(),
+				'location_id' => $w->getCellByColumnAndRow(5,$row)->getValue(),
+				'department_id' => $w->getCellByColumnAndRow(6,$row)->getValue(),
+				'designation_id' => $w->getCellByColumnAndRow(7,$row)->getValue(),
+				'username' => $w->getCellByColumnAndRow(8,$row)->getValue(),
+				'email' => $w->getCellByColumnAndRow(9,$row)->getValue(),
+				'gender' => $w->getCellByColumnAndRow(10,$row)->getValue(),
+				'office_shift_id' => $w->getCellByColumnAndRow(11,$row)->getValue(),
+				'date_of_birth' => $w->getCellByColumnAndRow(12,$row)->getValue(),
+				'contact_no' => $w->getCellByColumnAndRow(13,$row)->getValue(),
+				'password' => $w->getCellByColumnAndRow(14,$row)->getValue(),
+				'user_role_id' => $w->getCellByColumnAndRow(15,$row)->getValue(),
+				'reports_to' => $w->getCellByColumnAndRow(16,$row)->getValue(),
+				'leave_categories' => $w->getCellByColumnAndRow(17,$row)->getValue(),
+				'pincode' => $w->getCellByColumnAndRow(18,$row)->getValue(),
+				'basic_salary' => $w->getCellByColumnAndRow(19,$row)->getValue(),
+				'employment_type' => $w->getCellByColumnAndRow(20,$row)->getValue(),
+				'address' => $w->getCellByColumnAndRow(21,$row)->getValue(),
+				'is_active' => 1,
+				'created_at' => date('Y-m-d h:i:s')
+			);
+
+				$all_data [] = $data;
+		
+			}
+
+			echo json_encode($all_data);
+			exit();
+			$this->Employees_model->add($all_data);
+		}
+
+		// if ($_FILES['file']['size'] != 0) {
+		// 	echo json_encode(["message" => "No file"]);
+		// }
+
+		
+
+		
+	}
+
 	// Validate and add info in database
 	public function add_employee()
 	{
@@ -2201,6 +2262,9 @@ class Employees extends MY_Controller
 			/* Define return | here result is used to return user data and error for error message */
 			$Return = array('result' => '', 'error' => '', 'csrf_hash' => '');
 			$Return['csrf_hash'] = $this->security->get_csrf_hash();
+
+			//add bulk
+
 
 			//$office_shift_id = $this->input->post('office_shift_id');
 			$system = $this->Xin_model->read_setting_info(1);
@@ -2308,6 +2372,8 @@ class Employees extends MY_Controller
 			$password_hash = password_hash($this->input->post('password'), PASSWORD_BCRYPT, $options);
 			$leave_categories = array($this->input->post('leave_categories'));
 			$cat_ids = implode(',', $this->input->post('leave_categories'));
+
+
 
 			$data = array(
 				'employee_id' => $employee_id,
@@ -5476,17 +5542,15 @@ class Employees extends MY_Controller
 			$user_id = $this->input->post('user_id');
 
 			//if prcentage get the salary and do the percentage
-			
-			
-			if($title == "PAYE")
-			{
+
+
+			if ($title == "PAYE") {
 				$basic_salary = $this->Employees_model->get_basic_salary($this->input->post('user_id'))->basic_salary;
-				$deduction_amnt = explode("%",$amount)[0];
-				if($deduction_amnt == null or $deduction_amnt == "" or !is_numeric($deduction_amnt))
-				{
+				$deduction_amnt = explode("%", $amount)[0];
+				if ($deduction_amnt == null or $deduction_amnt == "" or !is_numeric($deduction_amnt)) {
 					$Return['error'] = "Invalid value for the amount";
 					exit;
-				}else{
+				} else {
 					$amount  = ($deduction_amnt / 100) * $basic_salary;
 				}
 			}

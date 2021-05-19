@@ -96,13 +96,54 @@ $reports_to = get_reports_team_data($session['user_id']); ?>
   </div>
 <?php } ?>
 <?php if (in_array('201', $role_resources_ids)) { ?>
+
+
+  <div class="row">
+    <div class="col-md-12">
+      <!-- bulk uload  modal-->
+
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+
+          <?php $attributes = array('name' => 'add_employee_bulk', 'id' => 'xin-form_', 'method' => 'post','autocomplete' => 'off'); ?>
+          <?php $hidden = array('_user' => $session['user_id']); ?>
+          <?php echo form_open_multipart('admin/employees/add_employee_bulk', $attributes, $hidden); ?>
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add Employees</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="last_name" class="control-label"><?php echo "Excel file"; ?><i class="hrsale-asterisk">*</i></label>
+                <input class="form-control"  name="list_of_employees" type="file" accept=".xlsx, xls" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+          </div>
+          <?php echo form_close(); ?>
+        </div>
+      </div>
+
+      <!-- end bulk upload modal -->
+    </div>
+  </div>
+
   <div class="card mb-4">
     <div id="accordion">
       <div class="card-header with-elements"> <span class="card-header-title mr-2"><strong><?php echo $this->lang->line('xin_add_new'); ?></strong> <?php echo $this->lang->line('xin_employee'); ?></span>
         <div class="card-header-elements ml-md-auto"> <a class="text-dark collapsed" data-toggle="collapse" href="#add_form" aria-expanded="false">
             <button type="button" class="btn btn-xs btn-primary"> <span class="ion ion-md-add"></span> <?php echo $this->lang->line('xin_add_new'); ?></button>
-          </a> </div>
+          </a>
+          <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#exampleModal"> <span class="ion ion-md-add"></span> <?php echo "Upload" ?></button>
+        </div>
       </div>
+
       <div id="add_form" class="collapse add-form <?php echo $get_animate; ?>" data-parent="#accordion" style="">
         <div class="card-body">
           <?php $attributes = array('name' => 'add_employee', 'id' => 'xin-form', 'autocomplete' => 'off'); ?>
